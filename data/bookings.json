@@ -1,0 +1,38 @@
+[
+  {
+    "id": "book-1",
+    "name": "Ananya Sharma",
+    "email": "ananya.sharma@example.com",
+    "phone": "+91 98765 01234",
+    "date": "2026-07-15",
+    "time": "14:30",
+    "type": "In-Store Viewing",
+    "status": "Confirmed",
+    "notes": "Looking to view the Bridal Kalyani collections. Requesting a private room viewing.",
+    "createdAt": "2026-07-06T10:15:30.000Z"
+  },
+  {
+    "id": "book-2",
+    "name": "Rajesh Patel",
+    "email": "rajesh.patel@example.com",
+    "phone": "+91 91234 56789",
+    "date": "2026-07-18",
+    "time": "11:00",
+    "type": "Virtual Consultation",
+    "status": "Pending",
+    "notes": "Interested in custom diamond engagement ring pricing and carat options.",
+    "createdAt": "2026-07-06T12:45:00.000Z"
+  },
+  {
+    "id": "book-1784547083214",
+    "name": "Krish Patel",
+    "email": "patelkrish8822@gmail.com",
+    "phone": "1234567890",
+    "date": "2026-07-08",
+    "time": "19:01",
+    "type": "In-Store Viewing",
+    "status": "Pending",
+    "notes": "srrt",
+    "createdAt": "2026-07-20T11:31:23.214Z"
+  }
+]

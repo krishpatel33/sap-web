@@ -1,0 +1,86 @@
+[
+  {
+    "id": "cat-earrings",
+    "name": "Earring",
+    "slug": "Earring",
+    "image": "/uploads/1784541612982_ChatGPT_Image_Jul_20__2026__03_28_38_PM.png",
+    "description": "Jhumkas, Studs & Drop Earrings"
+  },
+  {
+    "id": "cat-women-ring",
+    "name": "Women Ring",
+    "slug": "Women Ring",
+    "image": "/uploads/1784539449111_ChatGPT_Image_Jul_20__2026__02_53_36_PM.png",
+    "description": "Solitaire & Polki Cocktail Bands"
+  },
+  {
+    "id": "cat-gents-ring",
+    "name": "Gents Ring",
+    "slug": "Gents Ring",
+    "image": "/uploads/1784539748621_ChatGPT_Image_Jul_20__2026__02_58_49_PM.png",
+    "description": "Bold 22K Signets & Solid Bands"
+  },
+  {
+    "id": "cat-chain",
+    "name": "Chains",
+    "slug": "Chains",
+    "image": "/uploads/1784539907937_ChatGPT_Image_Jul_20__2026__03_01_33_PM.png",
+    "description": "Sleek Snake & Handcrafted Chains"
+  },
+  {
+    "id": "cat-pendants",
+    "name": "Pendant",
+    "slug": "Pendants",
+    "image": "/uploads/1784541172749_Jul_20__2026__03_22_39_PM.png",
+    "description": "Religious & Designer Lockets"
+  },
+  {
+    "id": "cat-mangalsutra",
+    "name": "Mangalsutra",
+    "slug": "Mangalsutra",
+    "image": "/uploads/1784541870465_ChatGPT_Image_Jul_20__2026__03_34_15_PM.png",
+    "description": "Sacred Black Bead 22K Gold Chains"
+  },
+  {
+    "id": "cat-bangles",
+    "name": "Bangles",
+    "slug": "Bangles",
+    "image": "/uploads/1784542035828_ChatGPT_Image_Jul_20__2026__03_37_04_PM.png",
+    "description": "Kadas & Handcrafted Bangle Sets"
+  },
+  {
+    "id": "cat-bracelets",
+    "name": "Bracelets",
+    "slug": "Bracelets",
+    "image": "/uploads/1784542176209_ChatGPT_Image_Jul_20__2026__03_39_25_PM.png",
+    "description": "Flexible & Solid Gold Wristwear"
+  },
+  {
+    "id": "cat-necklaces",
+    "name": "Necklaces",
+    "slug": "Necklaces",
+    "image": "/uploads/1784542371216_ChatGPT_Image_Jul_20__2026__03_42_31_PM.png",
+    "description": "Chokers & Heritage Gold Strands"
+  },
+  {
+    "id": "cat-wedding-set",
+    "name": "Wedding Sets",
+    "slug": "Wedding Sets",
+    "image": "/uploads/1784542649555_ChatGPT_Image_Jul_20__2026__03_47_17_PM.png",
+    "description": "Grand Bridal & Kalyani Sets"
+  },
+  {
+    "id": "cat-nose-pin",
+    "name": "Nose Pins",
+    "slug": "Nose Pins",
+    "image": "/uploads/1784543345419_ChatGPT_Image_Jul_20__2026__03_58_56_PM.png",
+    "description": "Classic & Designer Gold Nath"
+  },
+  {
+    "id": "cat-kansen",
+    "name": "Kansen",
+    "slug": "Kansen",
+    "image": "/uploads/1784546343998_ChatGPT_Image_Jul_20__2026__04_48_03_PM.png",
+    "description": "Ear-to-Hair Gold Support Chains"
+  }
+]

@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import { getSettings, saveSettings, isAdminAuthenticated } from "@/lib/api-helper";
+
+export async function GET() {
+  try {
+    const settings = await getSettings();
+    return NextResponse.json({ success: true, settings });
+  } catch (error) {
+    console.error("Settings GET error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to load settings" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Admin session required." },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { whatsappNumber, whatsappMessagePrefix } = body;
+
+    if (!whatsappNumber) {
+      return NextResponse.json(
+        { success: false, error: "WhatsApp Number is required." },
+        { status: 400 }
+      );
+    }
+
+    const saved = await saveSettings({
+      whatsappNumber,
+      whatsappMessagePrefix: whatsappMessagePrefix || "",
+    });
+
+    if (!saved) {
+      return NextResponse.json(
+        { success: false, error: "Failed to write settings file" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, settings: { whatsappNumber, whatsappMessagePrefix } });
+  } catch (error) {
+    console.error("Settings PUT error:", error);
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

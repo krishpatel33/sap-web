@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suvarna Jewellers — Gold Jewellery, Noir Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #171717;
+      --maroon-dark: #0c0c0c;
+      --maroon-deeper: #050505;
+      --gold: #c8992e;
+      --gold-light: #e9caa0;
+      --gold-pale: #f0e2c4;
+      --silver: #b7bcc2;
+      --silver-light: #e7e9eb;
+      --silver-pale: #d4d7da;
+      --ivory: #0a0a0a;
+      --cream: #141414;
+      --charcoal: #ece0c8;
+      --text-muted: rgba(236, 224, 200, 0.62);
+      --line: rgba(200, 153, 46, 0.28);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--ivory);
+      color: var(--charcoal);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    .display {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ---------- Ornamental SVG motifs (signature element) ---------- */
+    .corner-motif {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .corner-tl {
+      top: 14px;
+      left: 14px;
+    }
+
+    .corner-tr {
+      top: 14px;
+      right: 14px;
+      transform: scaleX(-1);
+    }
+
+    .corner-bl {
+      bottom: 14px;
+      left: 14px;
+      transform: scaleY(-1);
+    }
+
+    .corner-br {
+      bottom: 14px;
+      right: 14px;
+      transform: scale(-1, -1);
+    }
+
+    .divider-motif {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 0 auto 46px;
+      width: fit-content;
+    }
+
+    .divider-motif svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .divider-motif .line {
+      width: 70px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* ---------- Announcement bar ---------- */
+    .announce {
+      background: var(--maroon-deeper);
+      color: var(--gold-pale);
+      text-align: center;
+      font-size: 12.5px;
+      letter-spacing: 0.14em;
+      padding: 9px 12px;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo span {
+      font-family: 'Jost', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--gold-light);
+      display: block;
+      font-weight: 500;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 38px;
+    }
+
+    nav a {
+      font-size: 13.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      position: relative;
+      padding-bottom: 4px;
+      transition: color .25s;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width .3s;
+    }
+
+    nav a:hover {
+      color: var(--gold);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      font-size: 13px;
+      letter-spacing: .05em;
+      color: var(--charcoal);
+    }
+
+    .nav-icons a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--gold);
+      cursor: pointer;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(200, 153, 46, 0.10), transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(200, 153, 46, 0.12), transparent 50%),
+        linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 55%, #1c1c1c 100%);
+      color: var(--gold-pale);
+      padding: 120px 32px 130px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(232, 199, 102, 0.35);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 12.5px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 6vw, 78px);
+      line-height: 1.08;
+      color: var(--gold-light);
+      max-width: 850px;
+      margin: 0 auto 22px;
+      font-weight: 600;
+    }
+
+    .hero h1 em {
+      color: var(--gold);
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 17px;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 15px 36px;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 1px solid var(--gold);
+      transition: all .3s;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--maroon-dark);
+      font-weight: 500;
+    }
+
+    .btn-gold:hover {
+      background: var(--gold-light);
+    }
+
+    .btn-outline {
+      color: var(--gold-pale);
+      border-color: rgba(232, 199, 102, 0.55);
+    }
+
+    .btn-outline:hover {
+      background: rgba(232, 199, 102, 0.12);
+    }
+
+    /* purity ribbon badges */
+    .purity-row {
+      display: flex;
+      justify-content: center;
+      gap: 46px;
+      margin-top: 64px;
+      flex-wrap: wrap;
+    }
+
+    .purity-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: rgba(251, 246, 236, 0.85);
+      font-size: 11.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .purity-icon {
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .purity-item:nth-child(even) .purity-icon {
+      border-color: var(--silver);
+      color: var(--silver-light);
+    }
+
+    /* ---------- Section shared ---------- */
+    section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 20px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: block;
+      font-weight: 500;
+    }
+
+    .section-head h2 {
+      font-size: clamp(32px, 4vw, 46px);
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .section-head p {
+      color: var(--text-muted);
+      font-size: 15.5px;
+      line-height: 1.7;
+    }
+
+    /* ---------- Collections ---------- */
+    .collections {
+      background: var(--cream);
+    }
+
+    .coll-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .coll-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      padding: 28px 22px;
+      cursor: pointer;
+    }
+
+    .coll-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transition: transform .6s ease;
+    }
+
+    .coll-card:hover::before {
+      transform: scale(1.08);
+    }
+
+    .coll-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(5, 5, 5, 0.9) 100%);
+    }
+
+    .coll-card .label {
+      position: relative;
+      z-index: 2;
+      color: var(--gold-pale);
+    }
+
+    .coll-card .label small {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .coll-card .label h3 {
+      color: var(--gold-pale);
+      font-size: 24px;
+    }
+
+    .c1::before {
+      background: linear-gradient(160deg, #2a2a2a, #0a0a0a);
+    }
+
+    .c2::before {
+      background: linear-gradient(160deg, #c8992e, #171717);
+    }
+
+    .c3::before {
+      background: linear-gradient(160deg, #b7bcc2, #3a3a3a);
+    }
+
+    .c4::before {
+      background: linear-gradient(160deg, #d4d7da, #171717);
+    }
+
+    /* ---------- Heritage / craft ---------- */
+    .heritage {
+      background: var(--ivory);
+    }
+
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .heritage-visual {
+      position: relative;
+      aspect-ratio: 1/1;
+      background: linear-gradient(150deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .heritage-visual .ring {
+      width: 70%;
+      height: 70%;
+      border: 1px solid rgba(183, 188, 194, 0.35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .heritage-visual .ring2 {
+      width: 72%;
+      height: 72%;
+      border: 1px solid rgba(232, 199, 102, 0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-light);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 0.05em;
+      padding: 20px;
+    }
+
+    .heritage-copy .eyebrow {
+      margin-bottom: 16px;
+    }
+
+    .heritage-copy h2 {
+      font-size: 38px;
+      margin-bottom: 22px;
+      line-height: 1.2;
+    }
+
+    .heritage-copy p {
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 20px;
+      font-size: 15.5px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 44px;
+      margin-top: 36px;
+    }
+
+    .stat h4 {
+      font-size: 34px;
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .stat span {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ---------- Featured pieces ---------- */
+    .featured {
+      background: var(--cream);
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 34px;
+      margin-top: 60px;
+    }
+
+    .feat-card {
+      text-align: center;
+    }
+
+    .feat-image {
+      aspect-ratio: 4/5;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, var(--gold-pale), #eecf95 40%, var(--gold) 100%);
+    }
+
+    .feat-image .price-tag {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: rgba(10, 10, 10, 0.85);
+      color: var(--gold);
+      font-size: 12px;
+      padding: 7px 14px;
+      letter-spacing: .05em;
+    }
+
+    .feat-card h3 {
+      font-size: 21px;
+      margin-bottom: 6px;
+    }
+
+    .feat-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Testimonials ---------- */
+    .testimonials {
+      background: var(--maroon-dark);
+      color: var(--gold-pale);
+      text-align: center;
+    }
+
+    .testimonials .eyebrow {
+      color: var(--gold-light);
+    }
+
+    .testimonials h2 {
+      color: var(--gold);
+    }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .testi-card p {
+      font-size: 16px;
+      line-height: 1.8;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      color: rgba(251, 246, 236, 0.9);
+      margin-bottom: 20px;
+    }
+
+    .testi-name {
+      font-size: 12.5px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .stars {
+      color: var(--gold);
+      margin-bottom: 16px;
+      font-size: 14px;
+      letter-spacing: 3px;
+    }
+
+    /* ---------- Newsletter ---------- */
+    .newsletter {
+      background: var(--ivory);
+      text-align: center;
+      padding: 90px 0;
+    }
+
+    .newsletter h2 {
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
+
+    .newsletter p {
+      color: var(--text-muted);
+      margin-bottom: 34px;
+      font-size: 15px;
+    }
+
+    .nl-form {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .nl-form input {
+      flex: 1;
+      padding: 15px 18px;
+      border: 1px solid var(--gold);
+      border-right: none;
+      background: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      color: var(--charcoal);
+    }
+
+    .nl-form input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .nl-form input:focus {
+      outline: none;
+    }
+
+    .nl-form button {
+      padding: 15px 28px;
+      background: var(--gold);
+      color: var(--maroon-deeper);
+      border: none;
+      font-size: 12.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .25s;
+      font-weight: 500;
+    }
+
+    .nl-form button:hover {
+      background: var(--gold-light);
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: var(--maroon-deeper);
+      color: var(--text-muted);
+      padding: 80px 0 30px;
+    }
+
+    .foot-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 50px;
+      margin-bottom: 60px;
+    }
+
+    .foot-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .foot-grid p {
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .foot-col h4 {
+      font-size: 12px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 20px;
+    }
+
+    .foot-col ul li {
+      margin-bottom: 12px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .foot-col a:hover {
+      color: var(--gold-light);
+    }
+
+    .foot-bottom {
+      border-top: 1px solid rgba(200, 153, 46, 0.2);
+      padding-top: 26px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: rgba(236, 224, 200, 0.4);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* ---------- Reveal on scroll ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:980px) {
+      nav ul {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .coll-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .feat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heritage-grid {
+        grid-template-columns: 1fr;
+        gap: 44px;
+      }
+
+      .foot-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .purity-row {
+        gap: 26px;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="announce">BIS Hallmarked 916 Gold · Complimentary Cleaning For Life · Free Insured Shipping Across India
+  </div>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="#" class="logo">Suvarna<span>Jewellers Since 1962</span></a>
+      <nav>
+        <ul>
+          <li><a href="#collections">Collections</a></li>
+          <li><a href="#heritage">Our Craft</a></li>
+          <li><a href="#featured">Bridal</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#contact">Visit Us</a></li>
+        </ul>
+      </nav>
+      <div class="nav-icons">
+        <a href="#">Search</a>
+        <a href="#">Wishlist</a>
+        <a href="#">Bag (0)</a>
+      </div>
+      <button class="menu-toggle" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <svg class="corner-motif corner-tl" viewBox="0 0 100 100" fill="none">
+      <path d="M5 5 Q5 40 40 40 Q5 40 5 75" stroke="#e8c766" stroke-width="1" />
+      <circle cx="5" cy="5" r="4" fill="#e8c766" />
+    </svg>
+    <svg class="corner-motif corner-tr" viewBox="0 0 100 100" fill="none">
+      <path d="M5 5 Q5 40 40 40 Q5 40 5 75" stroke="#e8c766" stroke-width="1" />
+      <circle cx="5" cy="5" r="4" fill="#e8c766" />
+    </svg>
+    <svg class="corner-motif corner-bl" viewBox="0 0 100 100" fill="none">
+      <path d="M5 5 Q5 40 40 40 Q5 40 5 75" stroke="#e8c766" stroke-width="1" />
+      <circle cx="5" cy="5" r="4" fill="#e8c766" />
+    </svg>
+    <svg class="corner-motif corner-br" viewBox="0 0 100 100" fill="none">
+      <path d="M5 5 Q5 40 40 40 Q5 40 5 75" stroke="#e8c766" stroke-width="1" />
+      <circle cx="5" cy="5" r="4" fill="#e8c766" />
+    </svg>
+
+    <span class="hero-eyebrow">The Wedding Season Edit — 2026</span>
+    <h1>Heirlooms for the <em>moments</em><br>you'll tell your grandchildren about</h1>
+    <p>Handcrafted gold, diamond and temple jewellery — certified, insured, and made to be worn for generations.</p>
+    <div class="btn-row">
+      <a href="#collections" class="btn btn-gold">Explore Collections</a>
+      <a href="#contact" class="btn btn-outline">Book a Private Viewing</a>
+    </div>
+
+    <div class="purity-row">
+      <div class="purity-item">
+        <div class="purity-icon">✓</div>916 Hallmark Gold
+      </div>
+      <div class="purity-item">
+        <div class="purity-icon">◆</div>IGI Certified Diamonds
+      </div>
+      <div class="purity-item">
+        <div class="purity-icon">↺</div>Lifetime Exchange
+      </div>
+      <div class="purity-item">
+        <div class="purity-icon">⚑</div>62 Showrooms, Pan-India
+      </div>
+    </div>
+  </section>
+
+  <section class="collections" id="collections">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Curated For You</span>
+        <h2>Every Occasion, Its Own Radiance</h2>
+        <p>From everyday gold to once-in-a-lifetime bridal sets — browse collections built around how you actually wear
+          jewellery.</p>
+      </div>
+      <div class="coll-grid">
+        <div class="coll-card c1 reveal">
+          <div class="label"><small>24 Sets</small>
+            <h3>Bridal Kalyani</h3>
+          </div>
+        </div>
+        <div class="coll-card c2 reveal">
+          <div class="label"><small>40 Designs</small>
+            <h3>Temple Jewellery</h3>
+          </div>
+        </div>
+        <div class="coll-card c3 reveal">
+          <div class="label"><small>18K &amp; 22K</small>
+            <h3>Everyday Gold</h3>
+          </div>
+        </div>
+        <div class="coll-card c4 reveal">
+          <div class="label"><small>Solitaires &amp; Sets</small>
+            <h3>Diamond Edit</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="heritage" id="heritage">
+    <div class="container heritage-grid">
+      <div class="heritage-copy reveal">
+        <span class="eyebrow">Since 1962</span>
+        <h2>Three Generations of Karigari, One Standard of Purity</h2>
+        <p>Every piece begins in our own karkhana, where master karigars — many the third generation in their families
+          to hold the craft — hand-set every stone and finish every edge by hand.</p>
+        <p>We hallmark every gold piece to BIS 916 standard and certify every diamond through IGI, so what you buy is
+          exactly what the paperwork says.</p>
+        <div class="stat-row">
+          <div class="stat">
+            <h4 style="color:var(--gold);">62+</h4><span>Showrooms</span>
+          </div>
+          <div class="stat">
+            <h4 style="color:#8a9098;">1,200+</h4><span>Karigars</span>
+          </div>
+          <div class="stat">
+            <h4 style="color:var(--gold);">100%</h4><span>Hallmarked</span>
+          </div>
+        </div>
+      </div>
+      <div class="heritage-visual reveal">
+        <div class="ring">
+          <div class="ring2">Handcrafted in-house<br>since 1962</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured" id="featured">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">This Week's Edit</span>
+        <h2>Featured Pieces</h2>
+        <p>A short list of what's moving fastest across our showrooms right now.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card reveal">
+          <div class="feat-image"><span class="price-tag">₹1,84,500</span></div>
+          <h3>Ananta Bridal Necklace Set</h3>
+          <p>22K Gold · Polki &amp; Kundan</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-image"
+            style="background:linear-gradient(145deg,var(--silver-light),#dfe1e3 40%,var(--silver) 100%);"><span
+              class="price-tag">₹42,900</span></div>
+          <h3>Vilasa Diamond Solitaire Ring</h3>
+          <p>18K White Gold · IGI Certified</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-image"><span class="price-tag">₹68,200</span></div>
+          <h3>Devika Temple Choker</h3>
+          <p>22K Gold · Antique Finish</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">In Their Words</span>
+        <h2>From Our Family To Yours</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Our whole bridal set came from Suvarna — three fittings, zero pressure, and every stone matched the
+            certificate exactly."</p>
+          <div class="testi-name">— Priya R., Bengaluru</div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"I've bought gold coins here every Akshaya Tritiya for a decade. The purity has never once been in
+            question."</p>
+          <div class="testi-name">— Suresh M., Pune</div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"The temple jewellery collection is unlike anything else in the city — proper antique finish, not the shiny
+            factory look."</p>
+          <div class="testi-name">— Lakshmi N., Chennai</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div class="container reveal">
+      <span class="eyebrow">Stay Close To The Collection</span>
+      <h2>New Arrivals, Before Anyone Else</h2>
+      <p>Private previews of new bridal sets and festive collections, straight to your inbox.</p>
+      <form class="nl-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓';">
+        <input type="email" placeholder="Your email address" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="foot-grid">
+        <div>
+          <div class="foot-logo">Suvarna Jewellers</div>
+          <p>Handcrafted gold, diamond and temple jewellery since 1962. BIS Hallmarked. IGI Certified. Trusted across 62
+            showrooms in India.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">Bridal Collection</a></li>
+            <li><a href="#">Temple Jewellery</a></li>
+            <li><a href="#">Everyday Gold</a></li>
+            <li><a href="#">Diamond Edit</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Karigar Craft</a></li>
+            <li><a href="#">Store Locator</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h4>Get In Touch</h4>
+          <ul>
+            <li>+91 98765 43210</li>
+            <li>care@suvarnajewellers.in</li>
+            <li>Mon – Sun, 10am – 8pm</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Suvarna Jewellers. All rights reserved.</span>
+        <span>BIS Registered · GST Compliant · Terms &amp; Privacy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.querySelector('.menu-toggle');
+    const navUl = document.querySelector('nav ul');
+    toggle.addEventListener('click', () => {
+      navUl.style.display = navUl.style.display === 'flex' ? 'none' : 'flex';
+      navUl.style.flexDirection = 'column';
+      navUl.style.position = 'absolute';
+      navUl.style.top = '70px';
+      navUl.style.left = '0';
+      navUl.style.right = '0';
+      navUl.style.background = '#141414';
+      navUl.style.padding = '20px 32px';
+      navUl.style.gap = '18px';
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+
+</html>
