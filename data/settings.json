@@ -1,4 +1,10 @@
 {
-  "whatsappNumber": "919825470262",
-  "whatsappMessagePrefix": "Hi SAP Gold, I'm interested in the wholesale"
+  "whatsappNumber": "919601869197",
+  "whatsappMessagePrefix": "Hi SAP Gold, I'm interested in the wholesale",
+  "enableEmailAlerts": false,
+  "smtpHost": "",
+  "smtpPort": "",
+  "smtpUser": "",
+  "smtpPass": "",
+  "smtpToEmail": ""
 }
