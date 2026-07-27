@@ -54,97 +54,187 @@ export interface Settings {
   smtpToEmail?: string;
 }
 
-// Product DB Operations
-export async function getProducts(): Promise<Product[]> {
+const isProd = process.env.NODE_ENV === "production";
+
+// GitHub commit helper using native fetch
+export async function commitToGithub(
+  pathInRepo: string,
+  content: string | Buffer,
+  commitMessage: string
+): Promise<boolean> {
+  const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO; // e.g. "owner/repo"
+  const branch = process.env.GITHUB_BRANCH || "main";
+
+  if (!token || !repo) {
+    console.warn("GITHUB_TOKEN or GITHUB_REPO not configured. Skipping GitHub commit.");
+    return false;
+  }
+
+  // Normalize path (GitHub expects forward slashes)
+  const normalizedPath = pathInRepo.replace(/\\/g, "/");
+
   try {
-    const data = await fs.readFile(PRODUCTS_FILE, "utf-8");
-    return JSON.parse(data);
+    // 1. Fetch file's current SHA if it exists (required to update existing files in GitHub)
+    const getUrl = `https://api.github.com/repos/${repo}/contents/${normalizedPath}?ref=${branch}`;
+    const getRes = await fetch(getUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+        "User-Agent": "NextJS-App",
+      },
+    });
+
+    let sha: string | undefined;
+    if (getRes.ok) {
+      const data = await getRes.json();
+      if (data && typeof data === "object" && "sha" in data) {
+        sha = data.sha as string;
+      }
+    }
+
+    // 2. Base64 encode content
+    let base64Content: string;
+    if (Buffer.isBuffer(content)) {
+      base64Content = content.toString("base64");
+    } else {
+      base64Content = Buffer.from(content, "utf-8").toString("base64");
+    }
+
+    // 3. Commit back to GitHub
+    const putUrl = `https://api.github.com/repos/${repo}/contents/${normalizedPath}`;
+    const putRes = await fetch(putUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+        "User-Agent": "NextJS-App",
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: base64Content,
+        branch,
+        sha,
+      }),
+    });
+
+    if (!putRes.ok) {
+      const errorText = await putRes.text();
+      console.error(`Failed to commit to GitHub: ${putRes.status} ${putRes.statusText}`, errorText);
+      return false;
+    }
+
+    console.log(`Successfully committed ${normalizedPath} to GitHub`);
+    return true;
   } catch (error) {
-    console.error("Error reading products database:", error);
-    return [];
+    console.error(`Error in commitToGithub for ${normalizedPath}:`, error);
+    return false;
   }
 }
 
-export async function saveProducts(products: Product[]): Promise<boolean> {
+// Helpers for read/write paths in production (/tmp)
+async function getReadPath(originalPath: string): Promise<string> {
+  if (isProd) {
+    const filename = path.basename(originalPath);
+    const tmpPath = path.join("/tmp", "data", filename);
+    try {
+      await fs.access(tmpPath);
+      return tmpPath;
+    } catch {
+      return originalPath;
+    }
+  }
+  return originalPath;
+}
+
+async function getWritePath(originalPath: string): Promise<string> {
+  if (isProd) {
+    const filename = path.basename(originalPath);
+    const tmpDir = path.join("/tmp", "data");
+    await fs.mkdir(tmpDir, { recursive: true });
+    return path.join(tmpDir, filename);
+  }
+  return originalPath;
+}
+
+async function readDataFile<T>(originalPath: string, fallback: T): Promise<T> {
   try {
-    await fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2), "utf-8");
+    const readPath = await getReadPath(originalPath);
+    const data = await fs.readFile(readPath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading database file ${originalPath}:`, error);
+    return fallback;
+  }
+}
+
+async function saveDataFile(originalPath: string, data: any, commitMessage: string): Promise<boolean> {
+  try {
+    const content = JSON.stringify(data, null, 2);
+    
+    // Write locally (or to /tmp if in prod)
+    if (isProd) {
+      const writePath = await getWritePath(originalPath);
+      await fs.writeFile(writePath, content, "utf-8");
+    } else {
+      await fs.writeFile(originalPath, content, "utf-8");
+    }
+
+    // Push to GitHub if GITHUB_TOKEN is configured
+    const repoPath = path.relative(process.cwd(), originalPath).replace(/\\/g, "/");
+    await commitToGithub(repoPath, content, commitMessage);
+
     return true;
   } catch (error) {
-    console.error("Error writing products database:", error);
+    console.error(`Error writing database file ${originalPath}:`, error);
     return false;
   }
+}
+
+// Product DB Operations
+export async function getProducts(): Promise<Product[]> {
+  return readDataFile<Product[]>(PRODUCTS_FILE, []);
+}
+
+export async function saveProducts(products: Product[]): Promise<boolean> {
+  return saveDataFile(PRODUCTS_FILE, products, "Update products database");
 }
 
 // Category DB Operations
 export async function getCategories(): Promise<Category[]> {
-  try {
-    const data = await fs.readFile(CATEGORIES_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading categories database:", error);
-    return [];
-  }
+  return readDataFile<Category[]>(CATEGORIES_FILE, []);
 }
 
 export async function saveCategories(categories: Category[]): Promise<boolean> {
-  try {
-    await fs.writeFile(CATEGORIES_FILE, JSON.stringify(categories, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Error writing categories database:", error);
-    return false;
-  }
+  return saveDataFile(CATEGORIES_FILE, categories, "Update categories database");
 }
 
 // Settings DB Operations
 export async function getSettings(): Promise<Settings> {
-  try {
-    const data = await fs.readFile(SETTINGS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading settings database, falling back to default:", error);
-    return {
-      whatsappNumber: "919876543210",
-      whatsappMessagePrefix: "Hi, I'm interested in the",
-      enableEmailAlerts: false,
-      smtpHost: "smtp.gmail.com",
-      smtpPort: "587",
-      smtpUser: "",
-      smtpPass: "",
-      smtpToEmail: "patelkrish8822@gmail.com",
-    };
-  }
+  const defaultSettings: Settings = {
+    whatsappNumber: "919876543210",
+    whatsappMessagePrefix: "Hi, I'm interested in the",
+    enableEmailAlerts: false,
+    smtpHost: "smtp.gmail.com",
+    smtpPort: "587",
+    smtpUser: "",
+    smtpPass: "",
+    smtpToEmail: "patelkrish8822@gmail.com",
+  };
+  return readDataFile<Settings>(SETTINGS_FILE, defaultSettings);
 }
 
 export async function saveSettings(settings: Settings): Promise<boolean> {
-  try {
-    await fs.writeFile(SETTINGS_FILE, JSON.stringify(settings, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Error writing settings database:", error);
-    return false;
-  }
+  return saveDataFile(SETTINGS_FILE, settings, "Update settings database");
 }
 
 // Booking DB Operations
 export async function getBookings(): Promise<Booking[]> {
-  try {
-    const data = await fs.readFile(BOOKINGS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading bookings database:", error);
-    return [];
-  }
+  return readDataFile<Booking[]>(BOOKINGS_FILE, []);
 }
 
 export async function saveBookings(bookings: Booking[]): Promise<boolean> {
-  try {
-    await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Error writing bookings database:", error);
-    return false;
-  }
+  return saveDataFile(BOOKINGS_FILE, bookings, "Update bookings database");
 }
 
 // Simple Admin Authentication Helpers
@@ -179,23 +269,13 @@ export interface AdminCredentials {
 }
 
 export async function getAdminCredentials(): Promise<AdminCredentials> {
-  try {
-    const data = await fs.readFile(CREDENTIALS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    return {
-      username: "admin",
-      password: "admin",
-    };
-  }
+  const defaultCredentials: AdminCredentials = {
+    username: "admin",
+    password: "admin",
+  };
+  return readDataFile<AdminCredentials>(CREDENTIALS_FILE, defaultCredentials);
 }
 
 export async function saveAdminCredentials(credentials: AdminCredentials): Promise<boolean> {
-  try {
-    await fs.writeFile(CREDENTIALS_FILE, JSON.stringify(credentials, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Error writing admin credentials:", error);
-    return false;
-  }
+  return saveDataFile(CREDENTIALS_FILE, credentials, "Update admin credentials");
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/api-helper";
+import { isAdminAuthenticated, commitToGithub } from "@/lib/api-helper";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -27,21 +27,32 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save folder path
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    
-    // Ensure upload directory exists
-    await fs.mkdir(uploadDir, { recursive: true });
-
     // Generate unique file name
     const timestamp = Date.now();
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
     const filename = `${timestamp}_${cleanFileName}`;
-    const filePath = path.join(uploadDir, filename);
 
-    // Write file
-    await fs.writeFile(filePath, buffer);
-    console.log(`Uploaded file saved to ${filePath}`);
+    const isProd = process.env.NODE_ENV === "production";
+
+    if (isProd) {
+      // On Vercel, write to /tmp/uploads so we can serve it immediately before GitHub redeploy
+      const tmpDir = path.join("/tmp", "uploads");
+      await fs.mkdir(tmpDir, { recursive: true });
+      const tmpFilePath = path.join(tmpDir, filename);
+      await fs.writeFile(tmpFilePath, buffer);
+      console.log(`Uploaded file saved to temporary path ${tmpFilePath}`);
+    } else {
+      // Local development
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await fs.mkdir(uploadDir, { recursive: true });
+      const filePath = path.join(uploadDir, filename);
+      await fs.writeFile(filePath, buffer);
+      console.log(`Uploaded file saved to local public path ${filePath}`);
+    }
+
+    // Push the file to GitHub repository
+    const githubPath = `public/uploads/${filename}`;
+    await commitToGithub(githubPath, buffer, `Upload image: ${filename}`);
 
     return NextResponse.json({
       success: true,
