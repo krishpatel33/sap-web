@@ -21,6 +21,11 @@ const jost = Jost({
 export const metadata: Metadata = {
   title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
   description: "Exquisite handcrafted wholesale gold ornaments from Manek Chowk, Ahmedabad since 2000. 100% BIS 916 Hallmarked Gold jewelry.",
+  icons: {
+    icon: "/favicon.jpeg",
+    shortcut: "/favicon.jpeg",
+    apple: "/favicon.jpeg",
+  },
 };
 
 export default function RootLayout({
