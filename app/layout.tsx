@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import { ScrollAnimation } from "@/app/components/ScrollAnimation";
+import { CustomCursor } from "@/app/components/CustomCursor";
 
 const cormorant = Cormorant_Garamond({
   weight: ["300", "400", "500", "600", "700"],
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ScrollAnimation />
+        <CustomCursor />
         {children}
       </body>
     </html>
