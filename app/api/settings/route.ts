@@ -25,7 +25,16 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { whatsappNumber, whatsappMessagePrefix } = body;
+    const { 
+      whatsappNumber, 
+      whatsappMessagePrefix,
+      enableEmailAlerts,
+      smtpHost,
+      smtpPort,
+      smtpUser,
+      smtpPass,
+      smtpToEmail
+    } = body;
 
     if (!whatsappNumber) {
       return NextResponse.json(
@@ -34,10 +43,27 @@ export async function PUT(request: Request) {
       );
     }
 
-    const saved = await saveSettings({
+    if (enableEmailAlerts) {
+      if (!smtpHost || !smtpPort || !smtpUser || !smtpPass || !smtpToEmail) {
+        return NextResponse.json(
+          { success: false, error: "All SMTP settings are required when email alerts are enabled." },
+          { status: 400 }
+        );
+      }
+    }
+
+    const updatedSettings = {
       whatsappNumber,
       whatsappMessagePrefix: whatsappMessagePrefix || "",
-    });
+      enableEmailAlerts: !!enableEmailAlerts,
+      smtpHost: smtpHost || "",
+      smtpPort: smtpPort || "",
+      smtpUser: smtpUser || "",
+      smtpPass: smtpPass || "",
+      smtpToEmail: smtpToEmail || "",
+    };
+
+    const saved = await saveSettings(updatedSettings);
 
     if (!saved) {
       return NextResponse.json(
@@ -46,7 +72,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true, settings: { whatsappNumber, whatsappMessagePrefix } });
+    return NextResponse.json({ success: true, settings: updatedSettings });
   } catch (error) {
     console.error("Settings PUT error:", error);
     return NextResponse.json(

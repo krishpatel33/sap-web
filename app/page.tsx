@@ -35,7 +35,7 @@ export default async function Home() {
           <br />
           supplied direct from Manek Chowk
         </h1>
-        <p>Exquisite wholesale gold jewellery from SAP Gold Ornaments since 2000. 100% certified BIS 916 hallmarked ornaments.</p>
+        <p>Exquisite wholesale gold jewellery from SAP Gold Ornaments since 2000. 100% certified HUID ornaments.</p>
         <div className="btn-row">
           <Link
             href="/catalog"
@@ -65,7 +65,7 @@ export default async function Home() {
                 <circle cx="20" cy="7" r="1.5" fill="currentColor" />
               </svg>
             </div>
-            <span>916 Hallmark Gold</span>
+            <span>HUID GOLD</span>
           </div>
 
           <div className="purity-item reveal-up">
@@ -211,7 +211,7 @@ export default async function Home() {
             <span className="eyebrow" style={{ display: "block", textAlign: "center" }}>Wholesale Office & Showroom</span>
             <h2 style={{ textAlign: "center" }}>Showroom & Office Visits</h2>
             <p style={{ textAlign: "center", margin: "16px auto 0 auto", maxWidth: "660px", color: "var(--gold-pale, #e9caa0)" }}>
-              Schedule an exclusive consultation at our Manek Chowk office in Ahmedabad. Consult directly with Shaileshbhai Patel to explore full 916 gold collections and wholesale orders.
+              Schedule an exclusive consultation at our Manek Chowk office in Ahmedabad. Consult directly with Shaileshbhai Patel to explore HUID  gold collections and wholesale orders.
             </p>
           </div>
 

@@ -121,7 +121,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
     let text = `Hi, I'm interested in this gold ornament design from SAP Gold Ornaments:\n\n`;
     text += `*Design Name:* ${product.name}\n`;
     text += `*Category:* ${categoryName}\n`;
-    text += `*Metal Purity:* ${product.purity || "22K BIS 916 Gold"}\n`;
+    text += `*Metal Purity:* ${product.purity || "Yellow Gold BIS 916"}\n`;
     text += `*Approx. Weight:* ${product.weight || "Standard Weight"}\n`;
     if (product.details) {
       text += `*Karigari Details:* ${product.details}\n`;
@@ -215,7 +215,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                       <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
                     </svg>
                     <span style={{ fontSize: "11px", marginTop: "12px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                      {product.metal || "22K Gold"}
+                      {product.metal || "Yellow Gold"}
                     </span>
                   </div>
                 )}
@@ -242,7 +242,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                     gap: "6px",
                   }}
                 >
-                  <span style={{ color: "var(--gold)" }}>✦</span> BIS 916 Hallmarked
+                  <span style={{ color: "var(--gold)" }}>✦</span> HUID Certified
                 </div>
               </div>
 
@@ -297,7 +297,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 >
                   <span style={{ color: "var(--gold, #c8992e)", fontSize: "10px" }}>◆</span>
                   <span style={{ fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gold-light, #e9caa0)", fontWeight: 600 }}>
-                    PURITY: <span style={{ color: "#ffffff", fontWeight: 500 }}>{product.purity || "BIS 916 HALLMARK"}</span>
+                    PURITY: <span style={{ color: "#ffffff", fontWeight: 500 }}>{product.purity || "HUID"}</span>
                   </span>
                 </div>
 
@@ -315,7 +315,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 >
                   <span style={{ color: "var(--gold, #c8992e)", fontSize: "10px" }}>◆</span>
                   <span style={{ fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gold-light, #e9caa0)", fontWeight: 600 }}>
-                    METAL: <span style={{ color: "#ffffff", fontWeight: 500 }}>{product.metal || "22K GOLD"}</span>
+                    METAL: <span style={{ color: "#ffffff", fontWeight: 500 }}>{product.metal || "YELLOW GOLD"}</span>
                   </span>
                 </div>
 
@@ -440,7 +440,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
               {/* Wholesale Guarantees Banner */}
               <div className="product-guarantees-banner">
-                <span>🛡️ 100% BIS 916 Hallmark</span>
+                 <span>🛡️ 100% HUID Certified</span>
                 <span>⚖️ Certified Net Weight</span>
                 <span>📦 Direct Wholesale Rates</span>
               </div>

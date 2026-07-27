@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
                 rel="noopener noreferrer"
                 className="foot-address-link"
               >
-                405, Aabhusan Complex, Manek Chowk, Ahmedabad, Gujarat
+                402, Aabhusan Complex, Manek Chowk, Ahmedabad, Gujarat
               </a>
             </p>
           </div>
@@ -79,7 +79,7 @@ export const Footer: React.FC = () => {
                   className="foot-address-link"
                   style={{ textDecoration: "underline" }}
                 >
-                  405, Aabhusan Complex, Manek Chowk, Ahmedabad, Gujarat
+                  402, Aabhusan Complex, Manek Chowk, Ahmedabad, Gujarat
                 </a>
               </li>
               <li><strong>Hours:</strong> Mon – Sat, 10:00 AM – 7:30 PM</li>

@@ -23,10 +23,29 @@ function CatalogContent() {
   const [metalFilter, setMetalFilter] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(21);
 
   useEffect(() => {
     setMounted(true);
+
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setItemsPerPage(22);
+      } else {
+        setItemsPerPage(21);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Reset page to 1 when filters are updated
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, categoryFilter, metalFilter]);
 
   // Load category from query params if present
   useEffect(() => {
@@ -104,8 +123,47 @@ function CatalogContent() {
     return matchesSearch && matchesCategory && matchesMetal;
   });
 
+  // Paginate products: 21 items per page for desktop, 22 for mobile/tablet grids
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Compute pagination sliding window (max 12 page buttons)
+  const maxVisiblePages = 12;
+  let startPage = 1;
+  let endPage = totalPages;
+
+  if (totalPages > maxVisiblePages) {
+    const half = Math.floor(maxVisiblePages / 2);
+    if (currentPage <= half) {
+      startPage = 1;
+      endPage = maxVisiblePages;
+    } else if (currentPage + half >= totalPages) {
+      startPage = totalPages - maxVisiblePages + 1;
+      endPage = totalPages;
+    } else {
+      startPage = currentPage - half;
+      endPage = currentPage + (maxVisiblePages - half - 1);
+    }
+  }
+
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // Smooth scroll back to filters for premium UX
+    const anchor = document.querySelector(".luxury-filter-console");
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const openProductDetails = (product: Product) => {
-    router.push(`/catalog/${product.id}`);
+    window.open(`/catalog/${product.id}`, "_blank");
   };
 
   const getWhatsAppLink = (product: Product) => {
@@ -211,7 +269,7 @@ function CatalogContent() {
                 <label htmlFor="metal">Metal & Purity</label>
                 <select id="metal" value={metalFilter} onChange={(e) => setMetalFilter(e.target.value)}>
                   <option value="All">All Metals</option>
-                  <option value="Gold">22K Gold (BIS 916)</option>
+                  <option value="Gold">Yellow Gold</option>
                   <option value="White Gold">White Gold</option>
                   <option value="Rose Gold">Rose Gold</option>
                 </select>
@@ -259,70 +317,111 @@ function CatalogContent() {
               <p style={{ letterSpacing: "0.15em", textTransform: "uppercase" }}>Loading Masterpieces...</p>
             </div>
           ) : (
-            <div className="catalog-grid">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <div key={product.id} className="feat-card" onClick={() => openProductDetails(product)} style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
-                    <div>
-                      <div className="feat-image">
-                        {product.image && !product.image.includes("placeholder") ? (
-                          <img src={product.image} alt={product.name} />
-                        ) : (
-                          <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #171717, #0c0c0c)", color: "var(--gold)" }}>
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                              <path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z" fill="currentColor" opacity="0.1" />
-                              <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                            </svg>
-                            <span style={{ fontSize: "10px", marginTop: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                              {product.metal}
-                            </span>
-                          </div>
-                        )}
+            <>
+              <div className="catalog-grid">
+                {currentProducts.length > 0 ? (
+                  currentProducts.map((product) => (
+                    <div key={product.id} className="feat-card" onClick={() => openProductDetails(product)} style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
+                      <div>
+                        <div className="feat-image">
+                          {product.image && !product.image.includes("placeholder") ? (
+                            <img src={product.image} alt={product.name} />
+                          ) : (
+                            <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #171717, #0c0c0c)", color: "var(--gold)" }}>
+                              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                                <path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z" fill="currentColor" opacity="0.1" />
+                                <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+                              </svg>
+                              <span style={{ fontSize: "10px", marginTop: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                                {product.metal}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="product-card-title" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {product.name}
+                        </h3>
+                        <p className="product-card-subtitle">
+                          {product.metal || "Yellow Gold"}{product.purity ? ` · ${product.purity}` : ""}
+                        </p>
                       </div>
-                      <h3 className="product-card-title" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {product.name}
-                      </h3>
-                      <p className="product-card-subtitle">
-                        {product.metal || "22K Gold"}{product.purity ? ` · ${product.purity}` : ""}
-                      </p>
+                      
+                      {/* Direct WhatsApp Inquiry Button */}
+                      <div className="product-card-btn-wrap">
+                        <a
+                          href={getWhatsAppLink(product)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="btn btn-gold"
+                          style={{
+                            width: "100%",
+                            padding: "10px 16px",
+                            fontSize: "11px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "8px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            fontWeight: 500,
+                          }}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ verticalAlign: "middle" }}>
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.451 5.437.002 9.861-4.417 9.864-9.855.002-2.63-1.02-5.101-2.881-6.964C16.495 1.921 14.032.893 11.416.892 5.979.892 1.557 5.311 1.554 10.75c-.001 1.636.438 3.236 1.272 4.633L1.879 21.05l5.807-1.521c.005.003-.008-.005.361-.375z" />
+                          </svg>
+                          WhatsApp Inquiry
+                        </a>
+                      </div>
                     </div>
-                    
-                    {/* Direct WhatsApp Inquiry Button */}
-                    <div className="product-card-btn-wrap">
-                      <a
-                        href={getWhatsAppLink(product)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="btn btn-gold"
-                        style={{
-                          width: "100%",
-                          padding: "10px 16px",
-                          fontSize: "11px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "8px",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.1em",
-                          fontWeight: 500,
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ verticalAlign: "middle" }}>
-                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.451 5.437.002 9.861-4.417 9.864-9.855.002-2.63-1.02-5.101-2.881-6.964C16.495 1.921 14.032.893 11.416.892 5.979.892 1.557 5.311 1.554 10.75c-.001 1.636.438 3.236 1.272 4.633L1.879 21.05l5.807-1.521c.005.003-.008-.005.361-.375z" />
-                        </svg>
-                        WhatsApp Inquiry
-                      </a>
-                    </div>
+                  ))
+                ) : (
+                  <div className="no-results">
+                    <h3>No Designs Found</h3>
+                    <p style={{ marginTop: "10px" }}>Try broadening your search terms or relaxing filters.</p>
                   </div>
-                ))
-              ) : (
-                <div className="no-results">
-                  <h3>No Designs Found</h3>
-                  <p style={{ marginTop: "10px" }}>Try broadening your search terms or relaxing filters.</p>
+                )}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="pagination-container">
+                  <button
+                    onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="pagination-arrow"
+                    aria-label="Previous Page"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+
+                  <div className="pagination-numbers">
+                    {pageNumbers.map((number) => (
+                      <button
+                        key={number}
+                        onClick={() => handlePageChange(number)}
+                        className={`pagination-number ${currentPage === number ? "active" : ""}`}
+                      >
+                        {number}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="pagination-arrow"
+                    aria-label="Next Page"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       </main>

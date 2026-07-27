@@ -43,10 +43,10 @@ export async function POST(request: Request) {
       price: price ? Number(price) : 0,
       description: description || "",
       category,
-      metal: metal || "22K Gold (BIS 916)",
+      metal: metal || "Yellow Gold",
       details: details || "",
       weight: weight || "N/A",
-      purity: purity || "BIS 916 Hallmark",
+      purity: purity || "HUID",
       image: image || "/images/placeholder.webp", // Default fallback
     };
 
@@ -63,6 +63,45 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, product: newProduct });
   } catch (error) {
     console.error("Products POST error:", error);
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Admin session required." },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { products } = body;
+
+    if (!Array.isArray(products)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid request payload. Expected products array." },
+        { status: 400 }
+      );
+    }
+
+    const saved = await saveProducts(products);
+
+    if (!saved) {
+      return NextResponse.json(
+        { success: false, error: "Failed to write database file" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Products PUT error:", error);
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

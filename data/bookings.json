@@ -7,7 +7,7 @@
     "date": "2026-07-15",
     "time": "14:30",
     "type": "In-Store Viewing",
-    "status": "Confirmed",
+    "status": "Cancelled",
     "notes": "Looking to view the Bridal Kalyani collections. Requesting a private room viewing.",
     "createdAt": "2026-07-06T10:15:30.000Z"
   },
@@ -19,7 +19,7 @@
     "date": "2026-07-18",
     "time": "11:00",
     "type": "Virtual Consultation",
-    "status": "Pending",
+    "status": "Completed",
     "notes": "Interested in custom diamond engagement ring pricing and carat options.",
     "createdAt": "2026-07-06T12:45:00.000Z"
   },
@@ -31,7 +31,7 @@
     "date": "2026-07-08",
     "time": "19:01",
     "type": "In-Store Viewing",
-    "status": "Pending",
+    "status": "Cancelled",
     "notes": "srrt",
     "createdAt": "2026-07-20T11:31:23.214Z"
   }

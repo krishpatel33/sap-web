@@ -16,9 +16,20 @@ export default function AdminDashboard() {
   const [settings, setSettings] = useState<Settings>({
     whatsappNumber: "919876543210",
     whatsappMessagePrefix: "Hi, I'm interested in the",
+    enableEmailAlerts: false,
+    smtpHost: "smtp.gmail.com",
+    smtpPort: "587",
+    smtpUser: "",
+    smtpPass: "",
+    smtpToEmail: "patelkrish8822@gmail.com",
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"products" | "categories" | "bookings" | "settings">("products");
+  const [productCategoryFilter, setProductCategoryFilter] = useState("All");
+  const [isReorderMode, setIsReorderMode] = useState(false);
+  const [originalProducts, setOriginalProducts] = useState<Product[]>([]);
+  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   // Product modal and form states
   const [showProductModal, setShowProductModal] = useState(false);
@@ -32,10 +43,10 @@ export default function AdminDashboard() {
     price: 0,
     description: "",
     category: "",
-    metal: "22K Gold",
+    metal: "Yellow Gold",
     details: "",
     weight: "",
-    purity: "BIS 916 Hallmark",
+    purity: "HUID",
     image: "",
   });
 
@@ -56,6 +67,14 @@ export default function AdminDashboard() {
   // Settings form states
   const [settingsFormError, setSettingsFormError] = useState("");
   const [settingsSuccessMessage, setSettingsSuccessMessage] = useState("");
+
+  // Credentials form states
+  const [credFormError, setCredFormError] = useState("");
+  const [credSuccessMessage, setCredSuccessMessage] = useState("");
+  const [credForm, setCredForm] = useState({
+    username: "",
+    password: "",
+  });
 
   // Check auth session
   useEffect(() => {
@@ -206,10 +225,10 @@ export default function AdminDashboard() {
   const handleSettingsChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setSettings((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
     setSettingsSuccessMessage("");
   };
@@ -222,11 +241,29 @@ export default function AdminDashboard() {
       name: "",
       price: 0,
       description: "",
-      category: categories[0]?.slug || "Bridal",
-      metal: "22K Gold",
+      category: productCategoryFilter !== "All" ? productCategoryFilter : (categories[0]?.slug || "Bridal"),
+      metal: "Yellow Gold",
       details: "",
       weight: "",
-      purity: "BIS 916 Hallmark",
+      purity: "HUID",
+      image: "",
+    });
+    setFormError("");
+    setShowProductModal(true);
+  };
+
+  const handleOpenAddModalForCategory = (categorySlug: string) => {
+    setIsEditing(false);
+    setEditingId("");
+    setProductForm({
+      name: "",
+      price: 0,
+      description: "",
+      category: categorySlug,
+      metal: "Yellow Gold",
+      details: "",
+      weight: "",
+      purity: "HUID",
       image: "",
     });
     setFormError("");
@@ -298,6 +335,116 @@ export default function AdminDashboard() {
       console.error("Delete product error:", err);
       alert("Network error deleting product.");
     }
+  };
+
+  // Reordering Logic
+  const startReordering = () => {
+    setOriginalProducts([...products]);
+    setIsReorderMode(true);
+  };
+
+  const cancelReordering = () => {
+    setProducts(originalProducts);
+    setIsReorderMode(false);
+  };
+
+  const saveReordering = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ products }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setIsReorderMode(false);
+        fetchDashboardData();
+      } else {
+        alert(data.error || "Failed to save product ordering.");
+      }
+    } catch (err) {
+      console.error("Save reordering request error:", err);
+      alert("Network error saving product order.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const moveProduct = (index: number, direction: "left" | "right" | "up" | "down") => {
+    const visibleProducts = [...filteredProducts];
+    let targetIndex = index;
+    if (direction === "left") targetIndex = index - 1;
+    else if (direction === "right") targetIndex = index + 1;
+    else if (direction === "up") targetIndex = index - 3;
+    else if (direction === "down") targetIndex = index + 3;
+
+    if (targetIndex < 0 || targetIndex >= visibleProducts.length) return;
+
+    // Swap in the visible array
+    const temp = visibleProducts[index];
+    visibleProducts[index] = visibleProducts[targetIndex];
+    visibleProducts[targetIndex] = temp;
+
+    // Reconstruct the main products list preserving order of other categories
+    let visiblePointer = 0;
+    const newProducts = products.map((p) => {
+      const matchesFilter = productCategoryFilter === "All" || p.category.toLowerCase() === productCategoryFilter.toLowerCase();
+      if (matchesFilter) {
+        return visibleProducts[visiblePointer++];
+      }
+      return p;
+    });
+
+    setProducts(newProducts);
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (!isReorderMode) return;
+    setDraggedItemIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (!isReorderMode) return;
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (!isReorderMode) return;
+    if (draggedItemIndex === null || draggedItemIndex === dropIndex) {
+      setDraggedItemIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const visibleProducts = [...filteredProducts];
+    const [draggedProduct] = visibleProducts.splice(draggedItemIndex, 1);
+    visibleProducts.splice(dropIndex, 0, draggedProduct);
+
+    let visiblePointer = 0;
+    const newProducts = products.map((p) => {
+      const matchesFilter = productCategoryFilter === "All" || p.category.toLowerCase() === productCategoryFilter.toLowerCase();
+      if (matchesFilter) {
+        return visibleProducts[visiblePointer++];
+      }
+      return p;
+    });
+
+    setProducts(newProducts);
+    setDraggedItemIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItemIndex(null);
+    setDragOverIndex(null);
   };
 
   // Category CRUD Handlers
@@ -387,6 +534,13 @@ export default function AdminDashboard() {
       return;
     }
 
+    if (settings.enableEmailAlerts) {
+      if (!settings.smtpHost || !settings.smtpPort || !settings.smtpUser || !settings.smtpPass || !settings.smtpToEmail) {
+        setSettingsFormError("All SMTP settings are required when email alerts are enabled.");
+        return;
+      }
+    }
+
     try {
       const response = await fetch("/api/settings", {
         method: "PUT",
@@ -396,7 +550,7 @@ export default function AdminDashboard() {
 
       const data = await response.json();
       if (data.success) {
-        setSettingsSuccessMessage("WhatsApp Settings saved successfully!");
+        setSettingsSuccessMessage("System Settings saved successfully!");
         setSettings(data.settings);
       } else {
         setSettingsFormError(data.error || "Failed to save settings.");
@@ -404,6 +558,42 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("Settings submit error:", err);
       setSettingsFormError("Network error saving settings.");
+    }
+  };
+
+  // Credentials Update Handlers
+  const handleCredFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCredFormError("");
+    setCredSuccessMessage("");
+
+    if (!credForm.username || !credForm.password) {
+      setCredFormError("Both username and password are required.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credForm),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setCredSuccessMessage("Admin credentials updated successfully!");
+        setCredForm({ username: "", password: "" });
+      } else {
+        setCredFormError(data.error || "Failed to update credentials.");
+      }
+    } catch (err) {
+      console.error("Credentials submit error:", err);
+      setCredFormError("Network error updating credentials.");
     }
   };
 
@@ -441,6 +631,10 @@ export default function AdminDashboard() {
   const totalBookings = bookings.length;
   const totalCategoriesCount = categories.length;
   const pendingBookings = bookings.filter((b) => b.status === "Pending").length;
+
+  const filteredProducts = productCategoryFilter === "All"
+    ? products
+    : products.filter(p => p.category.toLowerCase() === productCategoryFilter.toLowerCase());
 
   return (
     <div className="admin-dashboard-container">
@@ -542,7 +736,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab("settings")}
             className={`admin-tab ${activeTab === "settings" ? "active" : ""}`}
           >
-            WhatsApp Settings
+            System Settings
           </button>
         </div>
 
@@ -556,73 +750,257 @@ export default function AdminDashboard() {
         {/* PRODUCTS PANEL */}
         {!loading && activeTab === "products" && (
           <div>
-            <div className="admin-panel-header">
-              <h2>Product Catalog ({products.length})</h2>
-              <button onClick={handleOpenAddModal} className="btn btn-gold">
-                + Add New Design
-              </button>
+            {/* Category Quick Selector cards */}
+            <div style={{ marginBottom: "12px", fontSize: "14px", color: "var(--gold-light)", fontWeight: 500 }}>
+              Categories Quick Filter & Direct Add:
+            </div>
+            <div className="admin-overview-grid" style={{ marginBottom: "28px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "16px" }}>
+              <div 
+                className="metric-card" 
+                style={{ 
+                  cursor: "pointer", 
+                  borderColor: productCategoryFilter === "All" ? "var(--gold)" : "var(--line)",
+                  background: productCategoryFilter === "All" ? "rgba(200, 153, 46, 0.06)" : "var(--card-bg)",
+                  transition: "all 0.25s ease"
+                }}
+                onClick={() => setProductCategoryFilter("All")}
+              >
+                <label style={{ cursor: "pointer" }}>All Categories</label>
+                <div className="value" style={{ fontSize: "24px", marginTop: "4px" }}>
+                  {products.length} <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 300 }}>Designs</span>
+                </div>
+              </div>
+
+              {categories.map((c) => {
+                const count = products.filter(
+                  (p) => p.category.toLowerCase() === c.slug.toLowerCase()
+                ).length;
+                const isSelected = productCategoryFilter === c.slug;
+                return (
+                  <div 
+                    key={c.id} 
+                    className="metric-card" 
+                    style={{ 
+                      cursor: "pointer", 
+                      borderColor: isSelected ? "var(--gold)" : "var(--line)",
+                      background: isSelected ? "rgba(200, 153, 46, 0.06)" : "var(--card-bg)",
+                      transition: "all 0.25s ease"
+                    }}
+                    onClick={() => setProductCategoryFilter(c.slug)}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", width: "100%" }}>
+                      <label style={{ cursor: "pointer", margin: 0 }}>{c.name}</label>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenAddModalForCategory(c.slug);
+                        }}
+                        className="btn btn-gold"
+                        style={{
+                          padding: "2px 8px",
+                          fontSize: "10px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          minWidth: "auto",
+                          height: "auto",
+                          lineHeight: "normal",
+                          marginTop: "-4px",
+                          marginRight: "-4px"
+                        }}
+                        title={`Add product directly to ${c.name}`}
+                      >
+                        + Add
+                      </button>
+                    </div>
+                    <div className="value" style={{ fontSize: "24px", marginTop: "4px" }}>
+                      {count} <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 300 }}>Designs</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            <div className="table-responsive">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Purity</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.length > 0 ? (
-                    products.map((product) => (
-                      <tr key={product.id}>
-                        <td>
-                          {product.image && !product.image.includes("placeholder") ? (
-                            <img src={product.image} alt="" style={{ width: "45px", height: "45px", objectFit: "cover", border: "1px solid var(--line)" }} />
-                          ) : (
-                            <div style={{ width: "45px", height: "45px", background: "#171717", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", fontSize: "10px" }}>
-                              Mock
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ fontWeight: 500 }}>{product.name}</td>
-                        <td style={{ textTransform: "capitalize" }}>
-                          {categories.find((c) => c.slug.toLowerCase() === product.category.toLowerCase())?.name || product.category}
-                        </td>
-                        <td style={{ fontSize: "12px", color: "var(--gold-light)" }}>
-                          {product.purity || "BIS 916 Hallmark"}
-                        </td>
-                        <td>
-                          <div className="action-btn-group">
-                            <button
-                              onClick={() => handleOpenEditModal(product)}
-                              className="icon-btn"
-                              title="Edit product"
-                            >
-                              ✎
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="icon-btn btn-delete"
-                              title="Delete product"
-                            >
-                              🗑
-                            </button>
+            <div className="admin-panel-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <div>
+                <h2>
+                  Product Catalog
+                  {productCategoryFilter !== "All" ? ` - ${categories.find(c => c.slug.toLowerCase() === productCategoryFilter.toLowerCase())?.name || productCategoryFilter}` : ""}
+                  {" "}({filteredProducts.length})
+                </h2>
+                {isReorderMode && (
+                  <p style={{ fontSize: "12px", color: "var(--gold)", marginTop: "4px" }}>
+                    ⚠️ Reorder Mode Active: Click the ← and → arrows on the cards to shift photos.
+                  </p>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                {isReorderMode ? (
+                  <>
+                    <button onClick={saveReordering} className="btn btn-gold">
+                      ✓ Save New Order
+                    </button>
+                    <button onClick={cancelReordering} className="btn btn-outline">
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {filteredProducts.length > 1 && (
+                      <button onClick={startReordering} className="btn btn-gold">
+                        Toggle
+                      </button>
+                    )}
+                    <button onClick={handleOpenAddModal} className="btn btn-gold">
+                      + Add New {productCategoryFilter !== "All" ? `${categories.find(c => c.slug.toLowerCase() === productCategoryFilter.toLowerCase())?.name || productCategoryFilter} ` : ""}Design
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="catalog-grid" style={{ marginTop: "24px" }}>
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product, index) => (
+                  <div 
+                    key={product.id} 
+                    className={`feat-card ${isReorderMode ? 'draggable-card' : ''}`}
+                    draggable={isReorderMode}
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                    style={{ 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      height: "100%", 
+                      justifyContent: "space-between",
+                      cursor: isReorderMode ? (draggedItemIndex === index ? "grabbing" : "grab") : "default",
+                      opacity: draggedItemIndex === index ? 0.3 : 1,
+                      border: isReorderMode && dragOverIndex === index && draggedItemIndex !== index ? "2px dashed var(--gold)" : undefined,
+                      transform: isReorderMode && dragOverIndex === index && draggedItemIndex !== index ? "scale(1.02)" : undefined,
+                      transition: "transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease"
+                    }}
+                  >
+                    <div>
+                      <div className="feat-image">
+                        {product.image && !product.image.includes("placeholder") ? (
+                          <img src={product.image} alt={product.name} />
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #171717, #0c0c0c)", color: "var(--gold)" }}>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                              <path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z" fill="currentColor" opacity="0.1" />
+                              <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+                            </svg>
+                            <span style={{ fontSize: "10px", marginTop: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                              {product.metal}
+                            </span>
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={7} style={{ textAlign: "center", color: "var(--text-muted)", padding: "30px" }}>
-                        No products inside showroom databases.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                        )}
+                      </div>
+                      <h3 className="product-card-title" style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "12px", fontSize: "18px" }}>
+                        {product.name}
+                      </h3>
+                      <p className="product-card-subtitle" style={{ fontSize: "13px", color: "var(--text-muted)", textAlign: "center", marginBottom: "16px" }}>
+                        {categories.find((c) => c.slug.toLowerCase() === product.category.toLowerCase())?.name || product.category}
+                        {` · `}
+                        {product.metal || "Yellow Gold"}
+                        {product.purity ? ` · ${product.purity}` : ""}
+                      </p>
+                    </div>
+
+                    {/* Admin Actions Bar */}
+                    {isReorderMode ? (
+                      <div className="reorder-dpad">
+                        {/* Row 1, Col 2: Up */}
+                        <button
+                          onClick={() => moveProduct(index, "up")}
+                          disabled={index < 3}
+                          className="reorder-arrow-btn"
+                          style={{ gridColumn: "2", gridRow: "1" }}
+                          title="Move Up"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                          </svg>
+                        </button>
+
+                        {/* Row 2, Col 1: Left */}
+                        <button
+                          onClick={() => moveProduct(index, "left")}
+                          disabled={index === 0}
+                          className="reorder-arrow-btn"
+                          style={{ gridColumn: "1", gridRow: "2" }}
+                          title="Move Left"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                          </svg>
+                        </button>
+                        
+                        {/* Row 2, Col 2: Down */}
+                        <button
+                          onClick={() => moveProduct(index, "down")}
+                          disabled={index >= filteredProducts.length - 3}
+                          className="reorder-arrow-btn"
+                          style={{ gridColumn: "2", gridRow: "2" }}
+                          title="Move Down"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                          </svg>
+                        </button>
+
+                        {/* Row 2, Col 3: Right */}
+                        <button
+                          onClick={() => moveProduct(index, "right")}
+                          disabled={index === filteredProducts.length - 1}
+                          className="reorder-arrow-btn"
+                          style={{ gridColumn: "3", gridRow: "2" }}
+                          title="Move Right"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", gap: "10px", borderTop: "1px solid var(--line)", paddingTop: "12px", marginTop: "10px" }}>
+                        <button
+                          onClick={() => handleOpenEditModal(product)}
+                          className="btn-edit-details"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                          </svg>
+                          Edit Details
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="btn-delete-product"
+                          title="Delete product"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="no-results" style={{ gridColumn: "1 / -1", textAlign: "center", padding: "48px 0" }}>
+                  <h3 style={{ color: "var(--text-muted)" }}>No Designs Found</h3>
+                  <p style={{ marginTop: "10px", fontSize: "14px", color: "var(--text-muted)" }}>This collection is currently empty.</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -666,12 +1044,46 @@ export default function AdminDashboard() {
                               </div>
                             )}
                           </td>
-                          <td style={{ fontWeight: 500 }}>{category.name}</td>
+                           <td 
+                            style={{ fontWeight: 500, cursor: "pointer" }}
+                            onClick={() => {
+                              setProductCategoryFilter(category.slug);
+                              setActiveTab("products");
+                            }}
+                            title={`Click to view all products in ${category.name}`}
+                          >
+                            <span style={{ borderBottom: "1px dashed rgba(200, 153, 46, 0.45)" }}>{category.name}</span>
+                          </td>
                           <td><code>{category.slug}</code></td>
                           <td>{category.description || "—"}</td>
-                          <td style={{ fontWeight: "bold", color: "var(--gold-light)" }}>{count} items</td>
+                          <td 
+                            style={{ fontWeight: "bold", color: "var(--gold-light)", cursor: "pointer" }}
+                            onClick={() => {
+                              setProductCategoryFilter(category.slug);
+                              setActiveTab("products");
+                            }}
+                            title={`Click to view all products in ${category.name}`}
+                          >
+                            <span style={{ borderBottom: "1px dashed rgba(233, 202, 160, 0.45)" }}>{count} items</span>
+                          </td>
                           <td>
-                            <div className="action-btn-group">
+                            <div className="action-btn-group" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                              <button
+                                onClick={() => handleOpenAddModalForCategory(category.slug)}
+                                className="btn btn-gold"
+                                style={{
+                                  padding: "4px 10px",
+                                  fontSize: "11px",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.05em",
+                                  minWidth: "auto",
+                                  height: "auto",
+                                  lineHeight: "normal"
+                                }}
+                                title={`Add product directly to ${category.name}`}
+                              >
+                                + Add Design
+                              </button>
                               <button
                                 onClick={() => handleOpenEditCategoryModal(category)}
                                 className="icon-btn"
@@ -797,7 +1209,7 @@ export default function AdminDashboard() {
         {!loading && activeTab === "settings" && (
           <div style={{ maxWidth: "600px", margin: "0 auto", background: "var(--cream)", border: "1px solid var(--line)", padding: "30px" }}>
             <h2 style={{ fontSize: "24px", color: "var(--gold-pale)", marginBottom: "20px", borderBottom: "1px solid var(--line)", paddingBottom: "10px" }}>
-              Global WhatsApp Settings
+              Global System Settings
             </h2>
             
             {settingsFormError && (
@@ -843,8 +1255,147 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
+              {/* EMAIL NOTIFICATIONS */}
+              <h3 style={{ fontSize: "18px", color: "var(--gold)", marginTop: "24px", marginBottom: "8px", borderBottom: "1px solid var(--line)", paddingBottom: "8px" }}>
+                Login Email Security Alerts
+              </h3>
+
+              <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px", margin: "8px 0" }}>
+                <input
+                  type="checkbox"
+                  id="enableEmailAlerts"
+                  name="enableEmailAlerts"
+                  checked={settings.enableEmailAlerts || false}
+                  onChange={handleSettingsChange}
+                  style={{ width: "18px", height: "18px", cursor: "pointer", accentColor: "var(--gold)" }}
+                />
+                <label htmlFor="enableEmailAlerts" style={{ cursor: "pointer", margin: 0, fontWeight: "500", fontSize: "13px", color: "var(--gold-pale)" }}>
+                  Enable Login Notification Emails
+                </label>
+              </div>
+
+              {settings.enableEmailAlerts && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px", background: "var(--maroon-dark)", padding: "18px", border: "1px solid var(--line)", borderRadius: "6px", marginTop: "4px" }}>
+                  <div className="form-group">
+                    <label htmlFor="smtpHost">SMTP Server Host *</label>
+                    <input
+                      type="text"
+                      id="smtpHost"
+                      name="smtpHost"
+                      required={settings.enableEmailAlerts}
+                      value={settings.smtpHost || ""}
+                      onChange={handleSettingsChange}
+                      placeholder="e.g. smtp.gmail.com"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="smtpPort">SMTP Server Port *</label>
+                    <input
+                      type="text"
+                      id="smtpPort"
+                      name="smtpPort"
+                      required={settings.enableEmailAlerts}
+                      value={settings.smtpPort || ""}
+                      onChange={handleSettingsChange}
+                      placeholder="e.g. 587"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="smtpUser">SMTP Login Username / Email *</label>
+                    <input
+                      type="email"
+                      id="smtpUser"
+                      name="smtpUser"
+                      required={settings.enableEmailAlerts}
+                      value={settings.smtpUser || ""}
+                      onChange={handleSettingsChange}
+                      placeholder="e.g. alert-sender@gmail.com"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="smtpPass">SMTP Login Password / App Password *</label>
+                    <input
+                      type="password"
+                      id="smtpPass"
+                      name="smtpPass"
+                      required={settings.enableEmailAlerts}
+                      value={settings.smtpPass || ""}
+                      onChange={handleSettingsChange}
+                      placeholder="Enter password or app code"
+                    />
+                    <span style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px", display: "block" }}>
+                      If using Gmail, generate an <strong>App Password</strong> from Google Account &rarr; Security settings.
+                    </span>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="smtpToEmail">Recipient Alert Email *</label>
+                    <input
+                      type="email"
+                      id="smtpToEmail"
+                      name="smtpToEmail"
+                      required={settings.enableEmailAlerts}
+                      value={settings.smtpToEmail || ""}
+                      onChange={handleSettingsChange}
+                      placeholder="e.g. you@example.com"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button type="submit" className="btn btn-gold" style={{ width: "100%", marginTop: "16px" }}>
+                Save System Settings
+              </button>
+            </form>
+
+            {/* Admin Credentials Panel */}
+            <h2 style={{ fontSize: "24px", color: "var(--gold-pale)", marginTop: "40px", marginBottom: "20px", borderBottom: "1px solid var(--line)", paddingBottom: "10px" }}>
+              Admin Credentials Settings
+            </h2>
+            
+            {credFormError && (
+              <div style={{ padding: "10px", background: "rgba(220, 53, 69, 0.1)", border: "1px solid var(--danger)", color: "var(--danger)", marginBottom: "15px", fontSize: "13px" }}>
+                {credFormError}
+              </div>
+            )}
+            {credSuccessMessage && (
+              <div style={{ padding: "10px", background: "rgba(40, 167, 69, 0.1)", border: "1px solid var(--success)", color: "var(--success)", marginBottom: "15px", fontSize: "13px" }}>
+                {credSuccessMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleCredentialsSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div className="form-group">
+                <label htmlFor="credUsername">New Admin Username *</label>
+                <input
+                  type="text"
+                  id="credUsername"
+                  name="username"
+                  required
+                  value={credForm.username}
+                  onChange={handleCredFormChange}
+                  placeholder="Enter new admin username"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="credPassword">New Admin Password *</label>
+                <input
+                  type="password"
+                  id="credPassword"
+                  name="password"
+                  required
+                  value={credForm.password}
+                  onChange={handleCredFormChange}
+                  placeholder="Enter new admin password"
+                />
+              </div>
+
               <button type="submit" className="btn btn-gold" style={{ width: "100%", marginTop: "10px" }}>
-                Save WhatsApp Settings
+                Update Credentials
               </button>
             </form>
           </div>
@@ -897,17 +1448,27 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="purity">Purity Standard *</label>
-                <input
-                  type="text"
-                  id="purity"
-                  name="purity"
-                  required
-                  value={productForm.purity}
-                  onChange={handleFormChange}
-                  placeholder="e.g. BIS 916 Hallmarked"
-                />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div className="form-group">
+                  <label htmlFor="metal">Metal Option *</label>
+                  <select id="metal" name="metal" value={productForm.metal} onChange={handleFormChange}>
+                    <option value="Yellow Gold">Yellow Gold</option>
+                    <option value="White Gold">White Gold</option>
+                    <option value="Rose Gold">Rose Gold</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="purity">Purity Standard *</label>
+                  <input
+                    type="text"
+                    id="purity"
+                    name="purity"
+                    required
+                    value={productForm.purity}
+                    onChange={handleFormChange}
+                    placeholder="e.g. HUID"
+                  />
+                </div>
               </div>
 
               {/* IMAGE UPLOAD GROUP */}
