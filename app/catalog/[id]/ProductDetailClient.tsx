@@ -36,26 +36,13 @@ export default function ProductDetailClient({
     .filter((p) => p.category.toLowerCase() === product.category.toLowerCase() && p.id !== product.id)
     .slice(0, 4);
 
-  // Generate WhatsApp inquiry link with full specifications
+  // Generate WhatsApp inquiry link with page URL sharing
   const getWhatsAppLink = () => {
-    const imageUrl = product.image
-      ? product.image.startsWith("http")
-        ? product.image
-        : `${baseUrl}${product.image}`
-      : "";
+    const pageUrl = `${baseUrl}/catalog/${product.id}`;
 
     let text = `Hi, I'm interested in this gold ornament design from SAP Gold Ornaments:\n\n`;
-    text += `*Design Name:* ${product.name}\n`;
-    text += `*Category:* ${categoryName}\n`;
-    text += `*Metal Purity:* ${product.purity || "Yellow Gold BIS 916"}\n`;
-    text += `*Approx. Weight:* ${product.weight || "Standard Weight"}\n`;
-    if (product.details) {
-      text += `*Karigari Details:* ${product.details}\n`;
-    }
-    if (imageUrl) {
-      text += `*Design Image:* ${imageUrl}\n`;
-    }
-    text += `\nPlease share current wholesale rates, availability, and ordering details.`;
+    text += `${pageUrl}\n\n`;
+    text += `Please share current wholesale rates, availability, and ordering details.`;
 
     return `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(text)}`;
   };
