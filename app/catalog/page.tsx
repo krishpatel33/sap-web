@@ -168,19 +168,11 @@ function CatalogContent() {
 
   const getWhatsAppLink = (product: Product) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const imageUrl = product.image
-      ? product.image.startsWith("http")
-        ? product.image
-        : `${origin}${product.image}`
-      : "";
+    const pageUrl = `${origin}/catalog/${product.id}`;
 
-    let text = `Hi, I'm interested in this jewelry design:\n\n*Design Name:* ${product.name}\n*Category:* ${product.category}`;
-
-    if (imageUrl) {
-      text += `\n*Design Photo:* ${imageUrl}`;
-    }
-
-    text += `\n\nPlease share wholesale rates and availability for this piece.`;
+    let text = `Hi, I'm interested in this gold ornament design from SAP Gold Ornaments:\n\n`;
+    text += `${pageUrl}\n\n`;
+    text += `Please share current wholesale rates, availability, and ordering details.`;
 
     return `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(text)}`;
   };
