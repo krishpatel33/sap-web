@@ -6,7 +6,6 @@ const PRODUCTS_FILE = path.join(process.cwd(), "data", "products.json");
 const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 const CATEGORIES_FILE = path.join(process.cwd(), "data", "categories.json");
 const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
-const CREDENTIALS_FILE = path.join(process.cwd(), "data", "credentials.json");
 
 // Types
 export interface Product {
@@ -46,12 +45,6 @@ export interface Category {
 export interface Settings {
   whatsappNumber: string;
   whatsappMessagePrefix: string;
-  enableEmailAlerts?: boolean;
-  smtpHost?: string;
-  smtpPort?: string;
-  smtpUser?: string;
-  smtpPass?: string;
-  smtpToEmail?: string;
 }
 
 const isProd = process.env.NODE_ENV === "production";
@@ -214,12 +207,6 @@ export async function getSettings(): Promise<Settings> {
   const defaultSettings: Settings = {
     whatsappNumber: "919876543210",
     whatsappMessagePrefix: "Hi, I'm interested in the",
-    enableEmailAlerts: false,
-    smtpHost: "smtp.gmail.com",
-    smtpPort: "587",
-    smtpUser: "",
-    smtpPass: "",
-    smtpToEmail: "patelkrish8822@gmail.com",
   };
   return readDataFile<Settings>(SETTINGS_FILE, defaultSettings);
 }
@@ -263,19 +250,4 @@ export async function clearAdminSession() {
   cookieStore.delete("suvarna_session");
 }
 
-export interface AdminCredentials {
-  username?: string;
-  password?: string;
-}
 
-export async function getAdminCredentials(): Promise<AdminCredentials> {
-  const defaultCredentials: AdminCredentials = {
-    username: "admin",
-    password: "admin",
-  };
-  return readDataFile<AdminCredentials>(CREDENTIALS_FILE, defaultCredentials);
-}
-
-export async function saveAdminCredentials(credentials: AdminCredentials): Promise<boolean> {
-  return saveDataFile(CREDENTIALS_FILE, credentials, "Update admin credentials");
-}

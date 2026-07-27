@@ -16,12 +16,6 @@ export default function AdminDashboard() {
   const [settings, setSettings] = useState<Settings>({
     whatsappNumber: "919876543210",
     whatsappMessagePrefix: "Hi, I'm interested in the",
-    enableEmailAlerts: false,
-    smtpHost: "smtp.gmail.com",
-    smtpPort: "587",
-    smtpUser: "",
-    smtpPass: "",
-    smtpToEmail: "patelkrish8822@gmail.com",
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"products" | "categories" | "bookings" | "settings">("products");
@@ -68,13 +62,7 @@ export default function AdminDashboard() {
   const [settingsFormError, setSettingsFormError] = useState("");
   const [settingsSuccessMessage, setSettingsSuccessMessage] = useState("");
 
-  // Credentials form states
-  const [credFormError, setCredFormError] = useState("");
-  const [credSuccessMessage, setCredSuccessMessage] = useState("");
-  const [credForm, setCredForm] = useState({
-    username: "",
-    password: "",
-  });
+
 
   // Check auth session
   useEffect(() => {
@@ -534,12 +522,7 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (settings.enableEmailAlerts) {
-      if (!settings.smtpHost || !settings.smtpPort || !settings.smtpUser || !settings.smtpPass || !settings.smtpToEmail) {
-        setSettingsFormError("All SMTP settings are required when email alerts are enabled.");
-        return;
-      }
-    }
+
 
     try {
       const response = await fetch("/api/settings", {
@@ -561,41 +544,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Credentials Update Handlers
-  const handleCredFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCredForm((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleCredentialsSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCredFormError("");
-    setCredSuccessMessage("");
-
-    if (!credForm.username || !credForm.password) {
-      setCredFormError("Both username and password are required.");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/auth", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credForm),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setCredSuccessMessage("Admin credentials updated successfully!");
-        setCredForm({ username: "", password: "" });
-      } else {
-        setCredFormError(data.error || "Failed to update credentials.");
-      }
-    } catch (err) {
-      console.error("Credentials submit error:", err);
-      setCredFormError("Network error updating credentials.");
-    }
-  };
 
   // Booking CRUD Handlers
   const handleUpdateBookingStatus = async (id: string, newStatus: string) => {
@@ -1255,149 +1204,14 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
-              {/* EMAIL NOTIFICATIONS */}
-              <h3 style={{ fontSize: "18px", color: "var(--gold)", marginTop: "24px", marginBottom: "8px", borderBottom: "1px solid var(--line)", paddingBottom: "8px" }}>
-                Login Email Security Alerts
-              </h3>
 
-              <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px", margin: "8px 0" }}>
-                <input
-                  type="checkbox"
-                  id="enableEmailAlerts"
-                  name="enableEmailAlerts"
-                  checked={settings.enableEmailAlerts || false}
-                  onChange={handleSettingsChange}
-                  style={{ width: "18px", height: "18px", cursor: "pointer", accentColor: "var(--gold)" }}
-                />
-                <label htmlFor="enableEmailAlerts" style={{ cursor: "pointer", margin: 0, fontWeight: "500", fontSize: "13px", color: "var(--gold-pale)" }}>
-                  Enable Login Notification Emails
-                </label>
-              </div>
-
-              {settings.enableEmailAlerts && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "14px", background: "var(--maroon-dark)", padding: "18px", border: "1px solid var(--line)", borderRadius: "6px", marginTop: "4px" }}>
-                  <div className="form-group">
-                    <label htmlFor="smtpHost">SMTP Server Host *</label>
-                    <input
-                      type="text"
-                      id="smtpHost"
-                      name="smtpHost"
-                      required={settings.enableEmailAlerts}
-                      value={settings.smtpHost || ""}
-                      onChange={handleSettingsChange}
-                      placeholder="e.g. smtp.gmail.com"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="smtpPort">SMTP Server Port *</label>
-                    <input
-                      type="text"
-                      id="smtpPort"
-                      name="smtpPort"
-                      required={settings.enableEmailAlerts}
-                      value={settings.smtpPort || ""}
-                      onChange={handleSettingsChange}
-                      placeholder="e.g. 587"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="smtpUser">SMTP Login Username / Email *</label>
-                    <input
-                      type="email"
-                      id="smtpUser"
-                      name="smtpUser"
-                      required={settings.enableEmailAlerts}
-                      value={settings.smtpUser || ""}
-                      onChange={handleSettingsChange}
-                      placeholder="e.g. alert-sender@gmail.com"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="smtpPass">SMTP Login Password / App Password *</label>
-                    <input
-                      type="password"
-                      id="smtpPass"
-                      name="smtpPass"
-                      required={settings.enableEmailAlerts}
-                      value={settings.smtpPass || ""}
-                      onChange={handleSettingsChange}
-                      placeholder="Enter password or app code"
-                    />
-                    <span style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px", display: "block" }}>
-                      If using Gmail, generate an <strong>App Password</strong> from Google Account &rarr; Security settings.
-                    </span>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="smtpToEmail">Recipient Alert Email *</label>
-                    <input
-                      type="email"
-                      id="smtpToEmail"
-                      name="smtpToEmail"
-                      required={settings.enableEmailAlerts}
-                      value={settings.smtpToEmail || ""}
-                      onChange={handleSettingsChange}
-                      placeholder="e.g. you@example.com"
-                    />
-                  </div>
-                </div>
-              )}
 
               <button type="submit" className="btn btn-gold" style={{ width: "100%", marginTop: "16px" }}>
                 Save System Settings
               </button>
             </form>
 
-            {/* Admin Credentials Panel */}
-            <h2 style={{ fontSize: "24px", color: "var(--gold-pale)", marginTop: "40px", marginBottom: "20px", borderBottom: "1px solid var(--line)", paddingBottom: "10px" }}>
-              Admin Credentials Settings
-            </h2>
-            
-            {credFormError && (
-              <div style={{ padding: "10px", background: "rgba(220, 53, 69, 0.1)", border: "1px solid var(--danger)", color: "var(--danger)", marginBottom: "15px", fontSize: "13px" }}>
-                {credFormError}
-              </div>
-            )}
-            {credSuccessMessage && (
-              <div style={{ padding: "10px", background: "rgba(40, 167, 69, 0.1)", border: "1px solid var(--success)", color: "var(--success)", marginBottom: "15px", fontSize: "13px" }}>
-                {credSuccessMessage}
-              </div>
-            )}
 
-            <form onSubmit={handleCredentialsSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div className="form-group">
-                <label htmlFor="credUsername">New Admin Username *</label>
-                <input
-                  type="text"
-                  id="credUsername"
-                  name="username"
-                  required
-                  value={credForm.username}
-                  onChange={handleCredFormChange}
-                  placeholder="Enter new admin username"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="credPassword">New Admin Password *</label>
-                <input
-                  type="password"
-                  id="credPassword"
-                  name="password"
-                  required
-                  value={credForm.password}
-                  onChange={handleCredFormChange}
-                  placeholder="Enter new admin password"
-                />
-              </div>
-
-              <button type="submit" className="btn btn-gold" style={{ width: "100%", marginTop: "10px" }}>
-                Update Credentials
-              </button>
-            </form>
           </div>
         )}
       </div>

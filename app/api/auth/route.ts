@@ -1,28 +1,18 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated, setAdminSession, clearAdminSession, getAdminCredentials, saveAdminCredentials, getSettings } from "@/lib/api-helper";
+import { isAdminAuthenticated, setAdminSession, clearAdminSession } from "@/lib/api-helper";
 import nodemailer from "nodemailer";
 
 async function sendLoginAlertEmail(username: string) {
   try {
-    const settings = await getSettings();
-    const enableAlerts = settings.enableEmailAlerts !== undefined 
-      ? settings.enableEmailAlerts 
-      : (!!process.env.SMTP_HOST);
-
-    if (!enableAlerts) {
-      console.log("Email alerts are disabled.");
-      return;
-    }
-
-    const host = settings.smtpHost || process.env.SMTP_HOST;
-    const port = settings.smtpPort || process.env.SMTP_PORT;
-    const user = settings.smtpUser || process.env.SMTP_USER;
-    const pass = settings.smtpPass || process.env.SMTP_PASS;
-    const to = settings.smtpToEmail || process.env.SMTP_TO_EMAIL;
+    const host = process.env.SMTP_HOST;
+    const port = process.env.SMTP_PORT;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const to = process.env.SMTP_TO_EMAIL;
 
     // Check if configuration exists
     if (!host || !port || !user || !pass || !to) {
-      console.warn("SMTP credentials or recipient email is missing in settings or environment variables. Skipped sending login alert.");
+      console.warn("SMTP credentials or recipient email is missing in environment variables. Skipped sending login alert.");
       return;
     }
 
@@ -55,7 +45,7 @@ async function sendLoginAlertEmail(username: string) {
               <td style="padding: 6px 0; color: #f0e2c4;">${new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })} IST</td>
             </tr>
           </table>
-          <p style="font-size: 13px; color: #ff8080; margin-top: 20px; line-height: 1.5; border-top: 1px dashed rgba(200, 153, 46, 0.15); padding-top: 15px;">If this login was unauthorized, please change your administrator credentials from the settings dashboard immediately.</p>
+          <p style="font-size: 13px; color: #ff8080; margin-top: 20px; line-height: 1.5; border-top: 1px dashed rgba(200, 153, 46, 0.15); padding-top: 15px;">If this login was unauthorized, please change your administrator credentials in your environment configuration immediately.</p>
         </div>
       `,
     };
@@ -75,9 +65,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-    const credentials = await getAdminCredentials();
-    const ADMIN_USER = credentials.username || "admin";
-    const ADMIN_PASS = credentials.password || "admin";
+    const ADMIN_USER = process.env.ADMIN_USERNAME || "admin";
+    const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin";
 
     if (username === ADMIN_USER && password === ADMIN_PASS) {
       await setAdminSession();
@@ -100,39 +89,10 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  try {
-    const authenticated = await isAdminAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized access" },
-        { status: 401 }
-      );
-    }
-
-    const { username, password } = await request.json();
-    if (!username || !password) {
-      return NextResponse.json(
-        { success: false, error: "Username and password are required" },
-        { status: 400 }
-      );
-    }
-
-    const success = await saveAdminCredentials({ username, password });
-    if (success) {
-      return NextResponse.json({ success: true });
-    } else {
-      return NextResponse.json(
-        { success: false, error: "Failed to save credentials" },
-        { status: 500 }
-      );
-    }
-  } catch (error) {
-    console.error("Auth PUT API Error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { success: false, error: "Admin credentials are managed via environment variables and cannot be updated at runtime." },
+    { status: 400 }
+  );
 }
 
 export async function DELETE() {

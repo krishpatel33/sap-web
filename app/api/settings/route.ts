@@ -25,16 +25,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { 
-      whatsappNumber, 
-      whatsappMessagePrefix,
-      enableEmailAlerts,
-      smtpHost,
-      smtpPort,
-      smtpUser,
-      smtpPass,
-      smtpToEmail
-    } = body;
+    const { whatsappNumber, whatsappMessagePrefix } = body;
 
     if (!whatsappNumber) {
       return NextResponse.json(
@@ -43,24 +34,9 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (enableEmailAlerts) {
-      if (!smtpHost || !smtpPort || !smtpUser || !smtpPass || !smtpToEmail) {
-        return NextResponse.json(
-          { success: false, error: "All SMTP settings are required when email alerts are enabled." },
-          { status: 400 }
-        );
-      }
-    }
-
     const updatedSettings = {
       whatsappNumber,
       whatsappMessagePrefix: whatsappMessagePrefix || "",
-      enableEmailAlerts: !!enableEmailAlerts,
-      smtpHost: smtpHost || "",
-      smtpPort: smtpPort || "",
-      smtpUser: smtpUser || "",
-      smtpPass: smtpPass || "",
-      smtpToEmail: smtpToEmail || "",
     };
 
     const saved = await saveSettings(updatedSettings);
