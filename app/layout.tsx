@@ -20,12 +20,33 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sap-web-theta.vercel.app"),
   title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
   description: "Exquisite handcrafted wholesale gold ornaments from Manek Chowk, Ahmedabad since 2000. 100% BIS 916 Hallmarked Gold jewelry.",
   icons: {
     icon: "/favicon.jpeg",
     shortcut: "/favicon.jpeg",
     apple: "/favicon.jpeg",
+  },
+  openGraph: {
+    title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
+    description: "Exquisite handcrafted wholesale gold ornaments from Manek Chowk, Ahmedabad since 2000. 100% BIS 916 Hallmarked Gold jewelry.",
+    siteName: "SAP Gold Ornaments",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 800,
+        height: 800,
+        alt: "SAP Gold Logo",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
+    description: "Exquisite handcrafted wholesale gold ornaments from Manek Chowk, Ahmedabad since 2000. 100% BIS 916 Hallmarked Gold jewelry.",
+    images: ["/logo.jpg"],
   },
 };
 

@@ -8,6 +8,27 @@ import { BookingForm } from "@/app/components/BookingForm";
 import { NewsletterForm } from "@/app/components/NewsletterForm";
 import { OccasionCarousel } from "@/app/components/OccasionCarousel";
 import { LandscapeSlider } from "@/app/components/LandscapeSlider";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
+  description: "Ahmedabad's premium wholesale gold jewelry showroom in Manek Chowk since 2000. Exquisite HUID-certified antique gold chokers, temple necklaces, bracelets, and bridal sets.",
+  openGraph: {
+    title: "SAP Gold Ornaments — Wholesale Gold Jewelry, Ahmedabad",
+    description: "Ahmedabad's premium wholesale gold jewelry showroom in Manek Chowk since 2000. Exquisite HUID-certified antique gold chokers, temple necklaces, bracelets, and bridal sets.",
+    url: "https://sap-web-theta.vercel.app",
+    siteName: "SAP Gold Ornaments",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 800,
+        height: 800,
+        alt: "SAP Gold Ornaments Logo",
+      },
+    ],
+    type: "website",
+  },
+};
 
 export default async function Home() {
   const products = await getProducts();
