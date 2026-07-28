@@ -1,5 +1,17 @@
 [
   {
+    "id": "prod-1784547245872",
+    "name": "Pendant120",
+    "price": 0,
+    "description": "",
+    "category": "Pendants",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1784547131963_ChatGPT_Image_Jul_20__2026__03_47_17_PM.png"
+  },
+  {
     "id": "prod-1784635261431",
     "name": "Pendant 125",
     "price": 0,
@@ -10,18 +22,6 @@
     "weight": "N/A",
     "purity": "HUID",
     "image": "/uploads/1784635259561_ChatGPT_Image_Jul_20__2026__03_37_04_PM.png"
-  },
-  {
-    "id": "prod-1784635145957",
-    "name": "Pendant 122",
-    "price": 0,
-    "description": "",
-    "category": "Pendants",
-    "metal": "Yellow Gold",
-    "details": "",
-    "weight": "N/A",
-    "purity": "HUID",
-    "image": "/uploads/1784635164168_ChatGPT_Image_Jul_20__2026__02_58_49_PM.png"
   },
   {
     "id": "prod-1784635138482",
