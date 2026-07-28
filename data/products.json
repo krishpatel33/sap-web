@@ -1,17 +1,5 @@
 [
   {
-    "id": "prod-1785077091740",
-    "name": "bangles ",
-    "price": 0,
-    "description": "",
-    "category": "Bangles",
-    "metal": "Yellow Gold",
-    "details": "",
-    "weight": "N/A",
-    "purity": "HUID",
-    "image": "/uploads/1785077090334_ChatGPT_Image_Jul_20__2026__06_10_17_PM.png"
-  },
-  {
     "id": "prod-1785223551030",
     "name": "Royal Link",
     "price": 0,
