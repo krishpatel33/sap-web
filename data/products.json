@@ -274,17 +274,5 @@
     "weight": "N/A",
     "purity": "HUID",
     "image": "/uploads/1785224543764_ChatGPT_Image_Jul_28__2026__12_46_27_PM.png"
-  },
-  {
-    "id": "prod-1785260920878",
-    "name": "Zenith Chain",
-    "price": 0,
-    "description": "",
-    "category": "Chains",
-    "metal": "Yellow Gold",
-    "details": "",
-    "weight": "N/A",
-    "purity": "HUID",
-    "image": "/uploads/1785260887042_ChatGPT_Image_Jul_28__2026__11_07_35_PM.png"
   }
 ]
