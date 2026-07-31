@@ -55,13 +55,16 @@ export function ScrollAnimation() {
       });
     };
 
-    observeElements();
-
-    // Catch dynamic updates (e.g. filtered catalog cards)
     const mutationObserver = new MutationObserver(() => observeElements());
-    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Defer execution to let React complete hydration before direct DOM manipulation
+    const timer = setTimeout(() => {
+      observeElements();
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       observer.disconnect();
       mutationObserver.disconnect();
     };
