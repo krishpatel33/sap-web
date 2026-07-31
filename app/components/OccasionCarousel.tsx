@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import Link from "next/link";
 import { Category } from "@/lib/api-helper";
 
@@ -10,14 +10,9 @@ interface OccasionCarouselProps {
 }
 
 export function OccasionCarousel({ categories, productCounts }: OccasionCarouselProps) {
-  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
   const userPausedRef = useRef(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Duplicate categories array for continuous infinite scroll
   const displayCategories = [...categories, ...categories];

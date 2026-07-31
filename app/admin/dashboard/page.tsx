@@ -64,27 +64,6 @@ export default function AdminDashboard() {
 
 
 
-  // Check auth session
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const response = await fetch("/api/auth");
-        const data = await response.json();
-        if (!data.authenticated) {
-          router.push("/admin/login");
-        } else {
-          setAuthChecked(true);
-          // Fetch initial dashboard data
-          fetchDashboardData();
-        }
-      } catch (err) {
-        console.error("Auth check failed:", err);
-        router.push("/admin/login");
-      }
-    }
-    checkAuth();
-  }, []);
-
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
@@ -115,6 +94,28 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  // Check auth session
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch("/api/auth");
+        const data = await response.json();
+        if (!data.authenticated) {
+          router.push("/admin/login");
+        } else {
+          setAuthChecked(true);
+          // Fetch initial dashboard data
+          fetchDashboardData();
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        router.push("/admin/login");
+      }
+    }
+    checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -1355,7 +1356,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="cat_slug">Identifier Slug (matches product's category filter) *</label>
+                <label htmlFor="cat_slug">Identifier Slug (matches product&apos;s category filter) *</label>
                 <input
                   type="text"
                   id="cat_slug"

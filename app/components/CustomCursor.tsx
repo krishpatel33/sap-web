@@ -24,7 +24,9 @@ export function CustomCursor() {
       return;
     }
 
-    setIsHidden(false);
+    setTimeout(() => {
+      setIsHidden(false);
+    }, 0);
 
     const onMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };

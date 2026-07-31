@@ -24,7 +24,9 @@ export const LandscapeSlider: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => {
+      setMounted(true);
+    }, 0);
   }, []);
 
   useEffect(() => {

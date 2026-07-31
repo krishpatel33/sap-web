@@ -205,19 +205,19 @@ export default async function Home() {
             <div className="testi-card reveal-up">
               <div className="stars">★★★★★</div>
               <p>
-                "We source our showroom's entire bridal gold inventory from SAP Gold Ornaments. Absolute purity, zero hassle, and timely delivery on every order."
+                &quot;We source our showroom&apos;s entire bridal gold inventory from SAP Gold Ornaments. Absolute purity, zero hassle, and timely delivery on every order.&quot;
               </p>
               <div className="testi-name">— Priya R., Retailer (Bengaluru)</div>
             </div>
             <div className="testi-card reveal-up">
               <div className="stars">★★★★★</div>
-              <p>"We have been buying bulk gold ornaments from Shaileshbhai for over 15 years. Their BIS 916 hallmarking is 100% reliable."</p>
+              <p>&quot;We have been buying bulk gold ornaments from Shaileshbhai for over 15 years. Their BIS 916 hallmarking is 100% reliable.&quot;</p>
               <div className="testi-name">— Suresh M., Showroom Owner (Pune)</div>
             </div>
             <div className="testi-card reveal-up">
               <div className="stars">★★★★★</div>
               <p>
-                "The antique temple gold collection from SAP Gold is highly detailed and sells out fast in our retail store. Master karigars work."
+                &quot;The antique temple gold collection from SAP Gold is highly detailed and sells out fast in our retail store. Master karigars work.&quot;
               </p>
               <div className="testi-name">— Lakshmi N., Boutique Owner (Chennai)</div>
             </div>

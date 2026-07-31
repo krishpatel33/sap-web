@@ -161,7 +161,7 @@ async function readDataFile<T>(originalPath: string, fallback: T): Promise<T> {
   }
 }
 
-async function saveDataFile(originalPath: string, data: any, commitMessage: string): Promise<boolean> {
+async function saveDataFile(originalPath: string, data: unknown, commitMessage: string): Promise<boolean> {
   try {
     const content = JSON.stringify(data, null, 2);
     

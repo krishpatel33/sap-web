@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Header } from "@/app/components/Header";
 import { Footer } from "@/app/components/Footer";
 import { Product, Category, Settings } from "@/lib/api-helper";
 
 function CatalogContent() {
-  const [mounted, setMounted] = useState(false);
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -21,14 +19,10 @@ function CatalogContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [metalFilter, setMetalFilter] = useState("All");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [toastMessage, setToastMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(21);
 
   useEffect(() => {
-    setMounted(true);
-
     const handleResize = () => {
       if (window.innerWidth <= 768) {
         setItemsPerPage(22);
@@ -44,24 +38,24 @@ function CatalogContent() {
 
   // Reset page to 1 when filters are updated
   useEffect(() => {
-    setCurrentPage(1);
+    const timer = setTimeout(() => {
+      setCurrentPage(1);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [searchQuery, categoryFilter, metalFilter]);
 
   // Load category from query params if present
   useEffect(() => {
     const cat = searchParams.get("category");
-    if (cat) {
-      setCategoryFilter(cat);
-    }
 
-    const openId = searchParams.get("open");
-    if (openId && products.length > 0) {
-      const prod = products.find((p) => p.id === openId);
-      if (prod) {
-        setSelectedProduct(prod);
+    const timer = setTimeout(() => {
+      if (cat) {
+        setCategoryFilter(cat);
       }
-    }
-  }, [searchParams, products]);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [searchParams]);
 
   // Fetch initial data (products, categories, settings)
   useEffect(() => {
@@ -285,7 +279,7 @@ function CatalogContent() {
                   )}
                   {searchQuery && (
                     <span className="filter-tag" onClick={() => setSearchQuery("")}>
-                      Search: "{searchQuery}" ✕
+                      Search: &quot;{searchQuery}&quot; ✕
                     </span>
                   )}
                 </div>
