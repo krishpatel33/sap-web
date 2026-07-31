@@ -586,5 +586,65 @@
     "weight": "N/A",
     "purity": "HUID",
     "image": "/uploads/1785518947483_ChatGPT_Image_Jul_31__2026__10_15_36_PM.png"
+  },
+  {
+    "id": "prod-1785521415305",
+    "name": "Eternal Grace",
+    "price": 0,
+    "description": "",
+    "category": "Mangalsutra",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1785521403280_ChatGPT_Image_Jul_31__2026__11_36_37_PM.png"
+  },
+  {
+    "id": "prod-1785521435252",
+    "name": "Divine Bond",
+    "price": 0,
+    "description": "",
+    "category": "Mangalsutra",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1785521423927_ChatGPT_Image_Jul_31__2026__11_36_29_PM.png"
+  },
+  {
+    "id": "prod-1785521451423",
+    "name": "Golden Promise",
+    "price": 0,
+    "description": "",
+    "category": "Mangalsutra",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1785521442624_ChatGPT_Image_Jul_31__2026__11_36_21_PM.png"
+  },
+  {
+    "id": "prod-1785521469211",
+    "name": "Forever Love",
+    "price": 0,
+    "description": "",
+    "category": "Mangalsutra",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1785521459413_ChatGPT_Image_Jul_31__2026__11_36_11_PM.png"
+  },
+  {
+    "id": "prod-1785521489054",
+    "name": "Sacred Union",
+    "price": 0,
+    "description": "",
+    "category": "Mangalsutra",
+    "metal": "Yellow Gold",
+    "details": "",
+    "weight": "N/A",
+    "purity": "HUID",
+    "image": "/uploads/1785521481550_ChatGPT_Image_Jul_31__2026__11_36_02_PM.png"
   }
 ]
