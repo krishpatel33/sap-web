@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       console.log(`Uploaded file saved to temporary path ${tmpFilePath}`);
     } else {
       // Local development
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      const uploadDir = "./public/uploads";
       await fs.mkdir(uploadDir, { recursive: true });
       const filePath = path.join(uploadDir, filename);
       await fs.writeFile(filePath, buffer);

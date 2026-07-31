@@ -2,10 +2,10 @@ import { promises as fs } from "fs";
 import path from "path";
 import { cookies } from "next/headers";
 
-const PRODUCTS_FILE = path.join(process.cwd(), "data", "products.json");
-const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-const CATEGORIES_FILE = path.join(process.cwd(), "data", "categories.json");
-const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
+const PRODUCTS_FILE = "./data/products.json";
+const BOOKINGS_FILE = "./data/bookings.json";
+const CATEGORIES_FILE = "./data/categories.json";
+const SETTINGS_FILE = "./data/settings.json";
 
 // Types
 export interface Product {
@@ -174,7 +174,7 @@ async function saveDataFile(originalPath: string, data: unknown, commitMessage: 
     }
 
     // Push to GitHub if GITHUB_TOKEN is configured
-    const repoPath = path.relative(process.cwd(), originalPath).replace(/\\/g, "/");
+    const repoPath = originalPath.replace(/^\.\//, "").replace(/\\/g, "/");
     await commitToGithub(repoPath, content, commitMessage);
 
     return true;

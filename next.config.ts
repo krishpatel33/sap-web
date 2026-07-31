@@ -13,6 +13,19 @@ const nextConfig: NextConfig = {
     "127.0.0.1",
     "127.0.0.1:3000",
   ],
+  outputFileTracingExcludes: {
+    "*": [
+      "./public/uploads/**/*",
+    ],
+  },
+  turbopack: {
+    ignoreIssue: [
+      {
+        path: "**/next.config.ts",
+        description: /Encountered unexpected file in NFT list/,
+      },
+    ],
+  },
 };
 
 export default nextConfig;
