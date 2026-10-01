@@ -227,16 +227,16 @@ export async function saveBookings(bookings: Booking[]): Promise<boolean> {
 // Simple Admin Authentication Helpers
 export async function isAdminAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get("suvarna_session");
+  const sessionCookie = cookieStore.get("sapgold_session");
   // Simple validation: the session is checked against a static token
-  return sessionCookie?.value === "suvarna_authorized_admin_token";
+  return sessionCookie?.value === "sapgold_authorized_admin_token";
 }
 
 export async function setAdminSession() {
   const cookieStore = await cookies();
   cookieStore.set({
-    name: "suvarna_session",
-    value: "suvarna_authorized_admin_token",
+    name: "sapgold_session",
+    value: "sapgold_authorized_admin_token",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
@@ -247,7 +247,7 @@ export async function setAdminSession() {
 
 export async function clearAdminSession() {
   const cookieStore = await cookies();
-  cookieStore.delete("suvarna_session");
+  cookieStore.delete("sapgold_session");
 }
 
 
