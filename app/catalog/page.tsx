@@ -175,9 +175,9 @@ function CatalogContent() {
     <>
       <Header />
 
-      <main className="catalog-section">
-        <div className="container">
-          <div className="catalog-head">
+      <main className="catalog-section" suppressHydrationWarning>
+        <div className="container" suppressHydrationWarning>
+          <div className="catalog-head reveal-up" suppressHydrationWarning>
             <span className="eyebrow">Discover Masterpieces</span>
             <h1 style={{ fontSize: "38px", color: "var(--gold-light)", marginBottom: "12px" }}>The Showroom Catalog</h1>
             <p style={{ color: "var(--text-muted)", maxWidth: "580px", margin: "0 auto" }}>
@@ -186,7 +186,7 @@ function CatalogContent() {
           </div>
 
           {/* Premium Luxury Filter Console */}
-          <div className="luxury-filter-console">
+          <div className="luxury-filter-console reveal-up" suppressHydrationWarning>
             {/* Category Pills Bar */}
             <div className="category-pills-bar">
               <button

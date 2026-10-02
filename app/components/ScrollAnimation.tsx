@@ -57,14 +57,18 @@ export function ScrollAnimation() {
 
     const mutationObserver = new MutationObserver(() => observeElements());
 
-    // Defer execution to let React complete hydration before direct DOM manipulation
+    // Defer execution until React completes hydration before direct DOM manipulation
+    let rafId: number;
     const timer = setTimeout(() => {
-      observeElements();
-      mutationObserver.observe(document.body, { childList: true, subtree: true });
-    }, 0);
+      rafId = requestAnimationFrame(() => {
+        observeElements();
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
+      });
+    }, 100);
 
     return () => {
       clearTimeout(timer);
+      if (rafId) cancelAnimationFrame(rafId);
       observer.disconnect();
       mutationObserver.disconnect();
     };
