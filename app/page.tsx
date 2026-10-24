@@ -48,7 +48,7 @@ export default async function Home() {
       <Header />
 
       {/* HERO SECTION */}
-      <section className="hero reveal-up">
+      <section className="hero">
         <CornerMotifs />
         <span className="hero-eyebrow">Wholesale Gold Jewellery Hub — Ahmedabad</span>
         <h1>
@@ -77,7 +77,7 @@ export default async function Home() {
         </div>
 
         <div className="purity-row stagger-children">
-          <div className="purity-item reveal-up">
+          <div className="purity-item">
             <div className="purity-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
                 <path d="M2 18h20v2H2zM3 14l3-8 6 5 6-5 3 8H3z" fill="currentColor" fillOpacity="0.25" />
@@ -89,7 +89,7 @@ export default async function Home() {
             <span>HUID GOLD</span>
           </div>
 
-          <div className="purity-item reveal-up">
+          <div className="purity-item">
             <div className="purity-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
                 <path d="M6 3h12l4 6-10 12L2 9l4-6z" fill="currentColor" fillOpacity="0.25" />
@@ -99,7 +99,7 @@ export default async function Home() {
             <span>Wholesale Pricing</span>
           </div>
 
-          <div className="purity-item reveal-up">
+          <div className="purity-item">
             <div className="purity-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fillOpacity="0.25" />
@@ -113,7 +113,7 @@ export default async function Home() {
             href="https://www.google.com/maps/search/?api=1&query=23.021482,72.589798"
             target="_blank"
             rel="noopener noreferrer"
-            className="purity-item reveal-up"
+            className="purity-item"
             style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
             title="Open Manek Chowk Location on Google Maps"
           >

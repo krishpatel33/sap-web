@@ -15,9 +15,7 @@ export function ScrollAnimation() {
       ".section-head",
       ".section-head h2",
       ".eyebrow",
-      ".purity-item",
       ".testi-card",
-      ".feat-card",
       ".heritage-copy",
       ".appointment",
       ".catalog-head",
@@ -35,7 +33,7 @@ export function ScrollAnimation() {
 
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
-      rootMargin: "0px 0px -50px 0px",
+      rootMargin: "0px 0px -20px 0px",
       threshold: 0.12,
     });
 
@@ -51,6 +49,13 @@ export function ScrollAnimation() {
         ) {
           el.classList.add("reveal-up");
         }
+
+        // Immediately reveal elements already inside the viewport
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add("is-visible");
+        }
+
         observer.observe(el);
       });
     };

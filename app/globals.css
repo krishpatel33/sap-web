@@ -1469,6 +1469,11 @@ footer {
   gap: 30px;
 }
 
+.catalog-grid .feat-card {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 .no-results {
   text-align: center;
   padding: 60px 0;
